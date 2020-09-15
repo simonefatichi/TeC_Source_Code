@@ -16,7 +16,7 @@ cc = 2; %% Crown area
 %%%%%%%%% METEO INPUT
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 id_location = 'Athens';
-load('C:\DD\DESKTOP_SF\BILANCIO IDROLOGICO\Experimental Watershed\Athens_Station\Data_Athens_RUN.mat')
+load('C:\Users\Simone\Documents\GitHub\TeC_v1.0_September_2020\Inputs\Data_Athens_RUN.mat')
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%
 x1=1;
@@ -37,7 +37,7 @@ t_bef= 1.0; t_aft= 0.0;
 Ds=esat-ea; %% [Pa] Vapor Pressure Deficit
 Ds(Ds<0)=0;
 %%%%%%%%%%%%%%%%%%%%%%%%%
-load('C:\DD\DESKTOP_SF\Eco-Hydrology Patterns\CO2_Data\Ca_Data.mat');
+load('C:\Users\Simone\Documents\GitHub\TeC_v1.0_September_2020\Inputs\Ca_Data.mat');
 d1 = find(abs(Date_CO2-Date(1))<1/36);d2 = find(abs(Date_CO2-Date(end))<1/36);
 Ca=Ca(d1:d2); 
 clear d1 d2 Date_CO2 
@@ -53,7 +53,7 @@ PARAM_IC = strcat(current_directory,'\MOD_PARAM_',id_location);
 %PARAM_IC = strcat(current_directory,'/MOD_PARAM_',id_location);
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %Directory = uigetdir('Window','Insert Directory Noname Package') ;
-Directory='C:\DD\DESKTOP_SF\BILANCIO IDROLOGICO\TeCgam\TeC_Code';
+Directory='C:\Users\Simone\Documents\GitHub\TeC_v1.0_September_2020\T&C_Code';
 cd(Directory)
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%
 MAIN_FRAME ;
