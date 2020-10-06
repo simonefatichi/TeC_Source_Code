@@ -11,7 +11,7 @@ function[Pr_sno,Pr_liq]=Precipitation_partition(Pr,Ta,Tmin,Tmax,ea,Pre)
 %Pr_liq  liquid precipitation [mm/h]
 %%%%%%%%%%%%%
 OPT_Pr_Part=2;
-%%%%% 
+%%%%%
 switch OPT_Pr_Part
     case 1
         %%REFERENCES %%  Wigmosta et al., 1994
@@ -40,13 +40,29 @@ switch OPT_Pr_Part
         gam=cp.*100.*Pre./(0.622*Laten); %% [Pa/C] psycrometric constant
         del=(4098*esat)./((237.3+Ta).^2); %% Pa/C
         Twb = Ta - ( esat - ea )./( gam + del);    % [C] %% Wet bulb temperature
+        %%%%%
         %%%%%%
+        %Wetbulb temperature following Sadeghi et.al 2013 DOI: 10.1175/JTECH-D-12-00191.1
+        %         if Ta > 0
+        %             a = 611;  b = 17.368; c = 238.88; gam = 6.42*10^-4;
+        %         else
+        %             a = 611; b = 17.966; c = 247.15; gam = 5.68*10^-4;
+        %         end
+        %         xi = (-3*10^-7)*Ta.^3 - (10^-5)*Ta.^2 +(2*10^-5).*Ta + 4.44*10^-2;%%empirical coefficient
+        %         phi = xi + gam*Pre/10;%%empirical coefficient
+        %         lam = 0.0014*exp(0.027*Ta);%%empirical coefficient
+        %         psi = a - gam*Pre/10*Ta-ea/1000;%%empirical coefficient
+        %         Twb = (-phi+sqrt(phi^2-4*lam*psi))/(2*lam); %wetbulb temperature
+        %         esat = a*exp(b*(Ta)/(Ta+c));% saturation vapor pressure Pa
+        %         U=ea./esat; %% Relative Humidity
+        %%%%%%%%%%%%%%%%
+        
         g= 9.81; %% [m/s^2] gravity acceleration
         P_Ref= 1013.25; %% [Pa] reference pressure
         Rd =287.05; %% [J/kg K] dry air gas constant
         %%%%% Reference Elevation
         Zref= -((Ta+15)/2+273.15)*(Rd/g)*log(Pre./P_Ref); %% [m]
-        Zref =Zref/1000;                  % elevation, [m] => [km]
+        Zref =Zref/1000; % elevation, [m] => [km]
         
         %%% Thresholds for discrimination precipitation
         dT = 0.215 - 0.099*U + 1.018*U^2;

@@ -1,7 +1,7 @@
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %   Subfunction  Albedo_Snow_Properties     %
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-function[snow_alb,tau_sno,e_sno]=Albedo_Snow_Properties(dt,SWE,h_S,Ts,SWEtm1,tau_snotm1,snow_albtm1,Th_Pr_sno,Pr_sno_day)
+function[snow_alb,tau_sno,e_sno]=Albedo_Snow_Properties(dt,SWE,h_S,Ts,SWEtm1,tau_snotm1,snow_albtm1,Th_Pr_sno,Pr_sno_day,Aice,Deb_Par,Cdeb,Cice,Ta_day,Pr_sno)
 %%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%% References [Oleson, et al., 2004]
 %%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -14,16 +14,32 @@ function[snow_alb,tau_sno,e_sno]=Albedo_Snow_Properties(dt,SWE,h_S,Ts,SWEtm1,tau
 %%% rostm1
 %%% Dtm1
 %%% tau_snotm1 [] Relative Age of snow (t-1)
+%%% MTa = maximum air temperature for the day divided so hourly
+%%% MTatm1 = maximum air temperature for the day divided so hourly at time
+%%% before
+%%% SWE = snow water equivalen [mm w.e.]
+%%% Aice = ice albedo
+%%% Deb_Par.alb = debris albedo
+%%% Cdeb = debris-covered glacier or not
+%%% Cice = glacier or not
+%%% Pr_sno = snowfall
 %%% OUTPUT
 % tau_sno [] %% Relative Age of snow
 %snow_alb.dir_vis
 %snow_alb.dif_vis
 %snow_alb.dir_nir
 %snow_alb.dif_nir
+%%AMTa_out = accumulated maximum air temperature as output in tau_sno 
 %%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%
 e_sno = 0.97; %%% Snow emissivity
 %%%%%%%%%%
+%Choose method based on if glacier or not
+% if Cice==1
+%     ANS=4; %Use snow on glacier albedo
+% else
+%     ANS=2; %Use previous method for most surfaces
+% end
 ANS=2;
 %%%%%%%
 switch ANS
@@ -59,7 +75,7 @@ switch ANS
             dtsno = 0;
         end
         tau_sno = (tau_snotm1 + dtsno)*(1-0.1*(SWE - SWEtm1));
-        if  (tau_sno <= 0) || ((SWE - SWEtm1) > 10);%% 10 mm to restore 
+        if  (tau_sno <= 0) || ((SWE - SWEtm1) > 10);%% 10 mm to restore
             tau_sno=0;
         end
         if tau_sno > 1000;
@@ -82,7 +98,7 @@ switch ANS
         %%% Reference [Douville 1995; Strack et al., 2004 ; Essery et al., 1999]
         %%% Parametrs
         %%%%%%%%%%%%%%
-        %Th_Pr_sno = ##; %% [mm] 
+        %Th_Pr_sno = ##; %% [mm]
         %%%%%%%%%%%%%%%
         Amin =0.5; tau_A = 0.008; tau_1 = 86400; %[s]
         tau_F = 0.24; %
@@ -122,5 +138,54 @@ switch ANS
         snow_alb.dif_vis = Asno;
         snow_alb.dif_nir = Asno;
         tau_sno=0;
+    case 4
+        %   Snow albedo function as described in Brock et al. (2000)
+        AMTatm1 = tau_snotm1;
+        %%%%
+        MTa=max(Ta_day)/24;
+        MTa(MTa<0)=0; %Only accumulate positive maximum temperature
+        %%%%%%%%
+        Br_Param.a = 0.713; %In deep snow equation
+        Br_Param.b = 0.112; %In deep snow equation
+        Br_Param.c = 0.442; %In shallow snow equation
+        Br_Param.d = -0.058; %In shallow snow equation
+        Br_Param.e = 0.024; %Length scale SWE
+        
+        %%%%%%%%%%
+        SWE_m=SWE/1000; %Convert SWE to snow depth m w.e.
+        
+        %Calculate maximum accumulated Ta
+        if Pr_sno==0 %No snow this hour
+            ATa=MTa + AMTatm1; %Accumulated max T this timestep
+            AMTa_out=ATa; %to go back as output for next timestep
+        else %Pr_sno>0
+            ATa=MTa; %Reset to only be accumulated max T for this hour as new snow
+            AMTa_out=ATa;
+        end
+        
+        %Determine underlying surface albedo
+        if Cdeb==0
+            a_u=Aice; %clean ice
+        else
+            a_u=Deb_Par.alb; %debris-covered ice
+        end
+        
+        %Deep snow albedo
+        a_ds = Br_Param.a - Br_Param.b*log10(ATa);
+        
+        %Shallow snow albedo
+        a_ss = a_u + Br_Param.c*exp(Br_Param.d*ATa);
+        
+        %Final snow albedo
+        Asno = (1-exp(-SWE_m/Br_Param.e))*a_ds + exp(-SWE_m/Br_Param.e)*a_ss;
+        
+        if Asno>0.85
+            Asno=0.85;
+        end
+        snow_alb.dir_vis = Asno;
+        snow_alb.dir_nir = Asno;
+        snow_alb.dif_vis = Asno;
+        snow_alb.dif_nir = Asno;
+        tau_sno=AMTa_out;
 end
 return
