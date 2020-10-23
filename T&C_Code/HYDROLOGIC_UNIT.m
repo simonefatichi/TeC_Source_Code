@@ -236,7 +236,7 @@ clear SAB1 SAB2 SAD1 SAD2 PARB PARD
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 if OPT_FR_SOIL == 1
     fQ= (Oice)./(Oice+Oint+1e-5-Ohy); %%[-]
-    Kfro = 10.^(-7.*fQ).*Ks_Zs; %% Hansson et al 2004
+    Kfro = 10.^(-5.*fQ).*Ks_Zs; %% Hansson et al 2004
     Ks_Zs=Kfro ;
 end
 %%%%%%%%%%%%%
