@@ -20,6 +20,7 @@ POT=zeros(NN,ms);
 Tdp=zeros(NN,ms);
 %Sdp=zeros(NN,ms);
 Vice=zeros(NN,ms);
+Oice=zeros(NN,ms);
 %%%%%%%%%%%%%%%%%%%%%%%%%%%
 OF=zeros(NN,1); OS=zeros(NN,1);
 ZWT=zeros(NN,1);
@@ -167,7 +168,10 @@ OPT_SoilBiogeochemistry = 0;
 %%%%%%%%% CALL PARAMETERS AND INITIAL CONDITION
 run(PARAM_IC);
 Restating_parameters;
-Oice=zeros(NN,ms);
+if length(Oice)==1
+    Oice=zeros(NN,ms);
+end
+%%%%%%%%%%
 Tdeb =zeros(NN,max(1,length(Zs_deb)-1));
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 Check_Land_Cover_Fractions(Crock,Curb,Cwat,Cbare,Ccrown);

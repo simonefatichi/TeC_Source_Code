@@ -194,7 +194,9 @@ OPT_SoilBiogeochemistry = 1;
 %%%%%%%%% CALL PARAMETERS AND INITIAL CONDITION
 run(PARAM_IC);
 Restating_parameters;
-Oice=zeros(NN,ms);
+if length(Oice)==1
+    Oice=zeros(NN,ms);
+end
 Tdeb =zeros(NN,max(1,length(Zs_deb)-1));
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 Check_Land_Cover_Fractions(Crock,Curb,Cwat,Cbare,Ccrown);

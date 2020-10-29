@@ -383,7 +383,7 @@ else
     %%%%%%%%%%%%%%%%%%%%%%%%
     V = Vout(end,:); % [mm/h] su Asur
     if OPT_FR_SOIL == 1
-        [V,~] = Cryosuction_stabilizer(Oice,V,dz,Osat,Ohy);
+        [V,~,Rd_cryo] = Cryosuction_stabilizer(Oice,V,dz,Osat,Ohy);
         Vice = (Oice).*dz;
     else
         Vice = (Oice).*dz;
@@ -401,6 +401,7 @@ end
     dz,ms,Ccrown,Osat,Ohy,nVG,alpVG,lVG,Ks_Zs,L,Pe,O33,Ks_mac,Omac,alpVGM,nVGM,lVGM,s_SVG,bVG,Phy,SPAR,EvL_Zs,Inf_Zs,RfH_Zs,RfL_Zs,...
     Rrootl_H,Rrootl_L,PsiL50_H,PsiL50_L,PsiX50_H,PsiX50_L);
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%% 
 [Tdp_H,Tdp_L]=RootZone_Temp(Tdp,RfH_Zs,RfL_Zs);
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %Qi_out, [mm] Lateral Flow outgoing  [1....m]
@@ -453,6 +454,8 @@ if (Slo_top > 0) && (sum(Qi_out) > 0) &&  not(Crock ==1 || Curb ==1 || Cwat ==1)
         - sum(Qi_out)*dth -Rd -sum(Jsx_L/Ared).*dth -sum(Jsx_H/Ared).*dth  + sum(Qi_in)*dth ; %%[mm]
     Qi_out = Qi_out + (dvol_correction/dth)*Qi_out/sum(Qi_out); %%[mm/h]
 end
+%%%%%%%%%
+Rd=Rd_cryo+Rd; 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%% Re-Transformation from Ared (rock content)
 %Not retransformed -- f=f*Ared;   WTR=WTR*Ared;  Qi_in=Qi_in*Ared;
