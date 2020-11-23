@@ -172,10 +172,10 @@ for cc=1:length(Ccrown)
         %%%%%%%%%%%%%%%%%%
         %%%%%%%%%%%%%%%%%%
         [TexC_H(cc),TexN_H(cc),TexP_H(cc),TexK_H(cc),TNIT_H(cc),TPHO_H(cc),TPOT_H(cc),NuLit_H(cc,:),Nreserve_H(cc),Preserve_H(cc),Kreserve_H(cc),...
-            SupN_H(cc),SupP_H(cc),SupK_H(cc),ISOIL_H(cc,:)]= Plant_Exports(B_H(cc,:),NuLit_Htm1(cc,:),...
+            SupN_H(cc),SupP_H(cc),SupK_H(cc),ISOIL_H(cc,:)]= Plant_Exports(B_H(cc,:),B_Htm1(cc,:),NuLit_Htm1(cc,:),...
             Slf_H(cc),Sfr_H(cc),Swm_H(cc),Sll_H(cc),Sr_H(cc),Rexmy_H(cc,:),Stoich_H(cc),Mpar_H(cc),fab_H(cc),fbe_H(cc),RB_H(cc,:),Nreserve_H(cc),Preserve_H(cc),Kreserve_H(cc),...
             rNc_H(cc),rPc_H(cc),rKc_H(cc),ManIH(cc));
-        %%%%%%%%%%%%%%%%,
+        %%%%%%%%%%%%%%%%
         %%%%%%%%%%%%%%%%%%%%%% Change in height SAI and Ccrown
         SAI_H(cc) =SAI_Htm1(cc);
         %%%%
@@ -196,8 +196,6 @@ for cc=1:length(Ccrown)
                 Kreserve_H(cc)=Kreserve_H(cc)*Ccrown_t_tm1(cc)/Ccrown_t(cc);
             end
         end
-        
-        
         
     else
         LAI_H(cc)=0;B_H(cc,:)=0;NPP_H(cc)=0;ANPP_H(cc)=0;Rg_H(cc)=0;RA_H(cc)=0;Rms_H(cc)=0;
@@ -227,7 +225,7 @@ for cc=1:length(Ccrown)
         %%%%%%%%%%%%%%%%%%
         %%%%%%%%%%%%%%%%%%
         [TexC_L(cc),TexN_L(cc),TexP_L(cc),TexK_L(cc),TNIT_L(cc),TPHO_L(cc),TPOT_L(cc),NuLit_L(cc,:),Nreserve_L(cc),Preserve_L(cc),Kreserve_L(cc),...
-            SupN_L(cc),SupP_L(cc),SupK_L(cc),ISOIL_L(cc,:)]= Plant_Exports(B_L(cc,:),NuLit_Ltm1(cc,:),...
+            SupN_L(cc),SupP_L(cc),SupK_L(cc),ISOIL_L(cc,:)]= Plant_Exports(B_L(cc,:),B_Ltm1(cc,:),NuLit_Ltm1(cc,:),...
             Slf_L(cc),Sfr_L(cc),Swm_L(cc),Sll_L(cc),Sr_L(cc),Rexmy_L(cc,:),Stoich_L(cc),Mpar_L(cc),fab_L(cc),fbe_L(cc),RB_L(cc,:),Nreserve_L(cc),Preserve_L(cc),Kreserve_L(cc),...
             rNc_L(cc),rPc_L(cc),rKc_L(cc),ManIL(cc));
         %%%%%%%%%%%%%%%%,
