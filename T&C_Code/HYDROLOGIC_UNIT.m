@@ -450,9 +450,9 @@ end
 %%%%%%%%%%%% Correction becuase Qi_out is computed with approximations
 %%%%%%%%%%%% discrete Tout
 if (Slo_top > 0) && (sum(Qi_out) > 0) &&  not(Crock ==1 || Curb ==1 || Cwat ==1)
-    dvol_correction = f*dth + sum(Vtm1) - sum(V) - (EG/Ared)*dth - Lk*dth ...
+    dvol_correction = f*dth + sum(Vtm1) - sum(V) + sum(Oicetm1.*dz) - sum(Vice) - (EG/Ared)*dth - Lk*dth ...
         - sum(Qi_out)*dth -Rd -sum(Jsx_L/Ared).*dth -sum(Jsx_H/Ared).*dth  + sum(Qi_in)*dth ; %%[mm]
-    Qi_out = Qi_out + (dvol_correction/dth)*Qi_out/sum(Qi_out); %%[mm/h]
+    Qi_out = Qi_out + (dvol_correction/dth)*Qi_out/sum(Qi_out); %%[mm/h] 
 end
 %%%%%%%%%
 Rd=Rd_cryo+Rd; 

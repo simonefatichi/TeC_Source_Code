@@ -187,8 +187,9 @@ if Crock ==1 || Curb ==1 || Cwat ==1
     CK1=0;
 else
     %%% n-coordinate
-    CK1 = f*dth + sum(Vtm1 - V) - EG*dth/(Asur*Ared) - Lk*dth/(Asur*Ared) ...
+    CK1 = f*dth + sum(Vtm1 - V) + sum((Oicetm1).*dz - Vice) - EG*dth/(Asur*Ared) - Lk*dth/(Asur*Ared) ...
         - sum(Qi_out)*dth/(Asur*Ared) -Rd/(Asur*Ared) -sum(Jsx_L).*dth/(Asur*Ared) -sum(Jsx_H).*dth/(Asur*Ared)  + sum(Qi_in)*dth/(Asur*Ared) ;
+
 end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 return
