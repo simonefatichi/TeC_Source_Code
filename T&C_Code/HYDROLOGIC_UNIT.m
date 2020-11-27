@@ -340,11 +340,13 @@ if Crock ==1 || Curb ==1 || Cwat ==1
     if OPT_FR_SOIL == 1
         V=(Oint-Ohy).*dz;
         Vice =(Oice).*dz;
+        Rd_cryo=0; 
     else
         V=Vtm1;
         Vice=V*0;
+        Rd_cryo=0; 
     end
-
+    
 else
     %%%%%%%%%%%%%%%%%%%
     %%% V over Asur and Ared (for rock content in the soil)
@@ -387,6 +389,7 @@ else
         Vice = (Oice).*dz;
     else
         Vice = (Oice).*dz;
+        Rd_cryo=0; 
     end
         %%%%%%%%%%%%%%%%%%%%%%
     if isnan(sum(V))
@@ -446,6 +449,8 @@ if not(Crock ==1 || Curb ==1 || Cwat ==1)
         %disp('Negative Volumes')
     end
 end
+%%%%%
+Rd=Rd_cryo+Rd; %%% Recombine Saturation Excess Runoff 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%% Correction becuase Qi_out is computed with approximations
 %%%%%%%%%%%% discrete Tout
@@ -455,7 +460,6 @@ if (Slo_top > 0) && (sum(Qi_out) > 0) &&  not(Crock ==1 || Curb ==1 || Cwat ==1)
     Qi_out = Qi_out + (dvol_correction/dth)*Qi_out/sum(Qi_out); %%[mm/h] 
 end
 %%%%%%%%%
-Rd=Rd_cryo+Rd; 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%% Re-Transformation from Ared (rock content)
 %Not retransformed -- f=f*Ared;   WTR=WTR*Ared;  Qi_in=Qi_in*Ared;
