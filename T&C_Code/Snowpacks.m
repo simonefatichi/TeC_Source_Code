@@ -82,13 +82,14 @@ if SWE <= 0
 else
     %%%%%%%%%%
     SWEeb= max(0.1,SWE+In_SWE); %%%[mm] Minumum snow-pack layer to compute energy budget temperature variations  
+    SWEeb= min(2000,SWEeb); %%%[mm]  Maximum Snow for computing energy budget (no more than 2m)
     %SWEeb=SWE+In_SWE;
     %%%% ENERGY BALANCE
     Qfm = (Ts < -0.01)*(row*(SP_wc_L/1000)*Lf/dt) - (Ts >= -0.01)*(row*(SP_wc_F/1000)*Lf/dt); %%% [W/m^2]  %% Freezing/Melting Water in the snowpack
     dQ = Rn + Qv + Qfm - H - QE -G;   % [W/m^2]  Variation Heat in the Snowpack
     dTs = (1000*dQ*dt)/(ci*(SWEeb)*row); %% Variation temperature in the snowpack [°C]
     TsF = Tstm1 + dTs ; %%  Temperature Snowpack [°C]
-    Qcc =ci*(SWE+In_SWE)*TsF*row/1000; %%  Snowpack Cold Content [J °C/m^2 K]
+    Qcc =ci*(SWEeb)*TsF*row/1000; %%  Snowpack Cold Content [J °C/m^2 K]
     %%%%% MASS BALANCE -- TEMPERATURE UPDATE
     if Qcc <= 0;
         Sm1 =0 ; Sm2=0; % Snow melt [mm]
