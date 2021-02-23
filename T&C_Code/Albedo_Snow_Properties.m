@@ -1,7 +1,9 @@
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %   Subfunction  Albedo_Snow_Properties     %
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-function[snow_alb,tau_sno,e_sno]=Albedo_Snow_Properties(dt,SWE,h_S,Ts,SWEtm1,tau_snotm1,snow_albtm1,Th_Pr_sno,Pr_sno_day,Aice,Deb_Par,Cdeb,Cice,Ta_day,Pr_sno)
+function[snow_alb,tau_sno,e_sno]=Albedo_Snow_Properties(dt,SWE,h_S,Ts,Ta,SWEtm1,tau_snotm1,snow_albtm1,Th_Pr_sno,Pr_sno_day,Aice,Deb_Par,Cdeb,Cice,Ta_day,Pr_sno,Pr_liq,ros,N)
+
+%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%% References [Oleson, et al., 2004]
 %%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -23,13 +25,15 @@ function[snow_alb,tau_sno,e_sno]=Albedo_Snow_Properties(dt,SWE,h_S,Ts,SWEtm1,tau
 %%% Cdeb = debris-covered glacier or not
 %%% Cice = glacier or not
 %%% Pr_sno = snowfall
+Pr_sno_day= Pr_sno_day+Pr_sno*dt/3600; %% [mm] 
+Ta_day= [reshape(Ta_day(2:length(Ta_day)),1,length(Ta_day)-1), Ta]; %%[°C]
 %%% OUTPUT
 % tau_sno [] %% Relative Age of snow
 %snow_alb.dir_vis
 %snow_alb.dif_vis
 %snow_alb.dir_nir
 %snow_alb.dif_nir
-%%AMTa_out = accumulated maximum air temperature as output in tau_sno 
+%%AMTa_out = accumulated maximum air temperature as output in tau_sno
 %%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%
 e_sno = 0.97; %%% Snow emissivity
@@ -40,7 +44,7 @@ e_sno = 0.97; %%% Snow emissivity
 % else
 %     ANS=2; %Use previous method for most surfaces
 % end
-ANS=2;
+ANS=5;
 %%%%%%%
 switch ANS
     case 1
@@ -75,7 +79,7 @@ switch ANS
             dtsno = 0;
         end
         tau_sno = (tau_snotm1 + dtsno)*(1-0.1*(SWE - SWEtm1));
-        if  (tau_sno <= 0) || ((SWE - SWEtm1) > 10);%% 10 mm to restore
+        if  (tau_sno <= 0) || ((SWE - SWEtm1) > 10) %% 10 mm to restore
             tau_sno=0;
         end
         if tau_sno > 1000;
@@ -155,13 +159,14 @@ switch ANS
         SWE_m=SWE/1000; %Convert SWE to snow depth m w.e.
         
         %Calculate maximum accumulated Ta
-        if Pr_sno==0 %No snow this hour
-            ATa=MTa + AMTatm1; %Accumulated max T this timestep
-            AMTa_out=ATa; %to go back as output for next timestep
-        else %Pr_sno>0
+        if (Pr_sno_day >= Th_Pr_sno) || (SWEtm1==0) %Snow greater than threshold or there was no snow on the timestep before
             ATa=MTa; %Reset to only be accumulated max T for this hour as new snow
             AMTa_out=ATa;
+        else %Pr_sno<threshold
+            ATa=MTa + AMTatm1; %Accumulated max T this timestep
+            AMTa_out=ATa; %to go back as output for next timestep
         end
+        
         
         %Determine underlying surface albedo
         if Cdeb==0
@@ -187,5 +192,106 @@ switch ANS
         snow_alb.dif_vis = Asno;
         snow_alb.dif_nir = Asno;
         tau_sno=AMTa_out;
+    case 5
+        %%%%%%%% Ding et al 2017 Albedo Parameterization
+        %   Snow albedo function as described in Ding et al. (2017)
+        
+        %%%%%
+        Asnotm1= tau_snotm1;
+        
+        Amax = 0.85;
+        Amin = 0.5;
+        if Cice == 1
+            if Cdeb == 1
+                Amin =  Deb_Par.alb;
+            else
+                Amin = Aice;
+            end
+        end
+        
+        Asnotm1(Asnotm1<Amin)=Amin;
+        Asnotm1(Asnotm1>Amax)=Amax;
+        %%%%%%%%%%%%%
+        if Pr_sno > 0.0
+            %%%% Fresh snow falling 
+            row = 1000; % water density [kg/m^3]
+            Ta_day=mean(Ta_day); 
+            ros_n = 1000*(0.05 + (((9/5)*Ta_day +32)> 0).*(((9/5)*Ta_day+32)./100).^2); %% [kg/m^3] new snow density [from Bras 1990]
+            dsn = 0.001*Pr_sno_day*row/ros_n ; %%%[m] the new cumulative snowfall depth since the beginning of the snowfall event
+            
+            ros_nd = ros_n; %% density of dry snow  --- [kg/m^3] assumed to be the density of the new snow 
+            
+            % d_snowfall: snow particle diameter of new snowfall (m) Andersen 1976
+            if ros_nd >= 400
+                d_snowfall = 2.976e-3;
+            else
+                d_snowfall = 1.6e-4 + 1.1e-13*ros_nd.^4;
+            end
+            
+            alb_fs = 0.61 + 0.21*exp(-d_snowfall/(0.001069));  % parameterization, fresh snow albedo
+            K_alb = (2.4*exp(-d_snowfall/(0.000116)) + 0.33)*(Pr_sno_day^(-0.91*exp(-d_snowfall/(0.000106))-0.03)); % parameterization
+            K_alb(Pr_sno_day==0)=0; 
+            alb_0 = alb_fs*(1- exp(-K_alb*(Pr_sno_day))) +  Asnotm1*exp(-2*K_alb*(Pr_sno_day)); % parameterization
+            
+            % Sleet impact
+            frac_s_Prec = Pr_sno/(Pr_liq+Pr_sno);    % solid fraction of total precipitation
+            
+            if frac_s_Prec > 0.5
+                alb_s = (alb_0 - Asnotm1)*(frac_s_Prec -0.5)/0.5 + Asnotm1;
+            else
+                alb_s = Asnotm1;
+            end
+            
+            
+            % Shallow snow impact
+            frac_snow = dsn/(dsn + 0.02);  %  snow cover fraction of the new snowfall [-]
+            Asno = alb_s*frac_snow + Asnotm1*(1-frac_snow);
+            
+            
+        else
+            % Snow Aging - No Fresh snow 
+            
+            %%%% Baker et al. [1990] and Verseghy [1991]
+            %Amin =0.5; %% Amin =0.2;
+            tau_A = 0.008; tau_1 = 86400; %[s]
+            tau_F = 0.24; %
+            %tau_F = 0.48;
+            %Amax = 0.85;
+            if Ts < -0.01 %  A  % albedo of snow
+                %%% frozen
+                Asno = Asnotm1 -tau_A*dt/tau_1;
+            else
+                % Melting Season
+                Asno= (Asnotm1 - Amin)*exp(-tau_F*dt/tau_1) + Amin; %%
+            end
+            Asno(Asno<Amin)=Amin;
+        end
+        
+
+        % Cloud (Petzold, 1977)
+        if N > 0
+            dac =  0.00449 + 0.097*N.^3; % Correction for Cloud cover
+        else
+            dac = 0;
+        end
+        
+        % Sun-angle (Petzold, 1977)
+        if (h_S/pi*180 <=40) &&  (h_S>0)
+            dab =  -0.019 + 0.248*exp(-(h_S/pi*180)/15.5); % Correction for Solar Elevation
+        else
+            dab=0;
+        end
+        
+        tau_sno=Asno;
+        Asno = Asno + dac  + dab ;
+        
+        Asno(Asno<Amin)=Amin;
+        Asno(Asno>Amax)=Amax;
+        
+        snow_alb.dir_vis = Asno;
+        snow_alb.dir_nir = Asno;
+        snow_alb.dif_vis = Asno;
+        snow_alb.dif_nir = Asno;
+        
 end
 return

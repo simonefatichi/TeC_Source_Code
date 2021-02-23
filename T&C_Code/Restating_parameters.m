@@ -11,7 +11,7 @@ if not(exist('a_dis','var'))
 end
 
 %%%% Terrain Properties
-if not(exist('Slo_top','var'))
+if not(exist('aR','var'))
     fpr=1;
     SvF=1; %% Sky View Factor
     SN=0; %% Stream Identifier
@@ -112,7 +112,7 @@ if not(exist('OM_H','var'))
     OM_L=1;
 end
 %%%%%% Snow-Ice Parameters
-if not(exist('Th_Pr_sno','var'))
+if not(exist('Aice','var'))
     SnowIce_Param.TminS=-0.8;
     SnowIce_Param.TmaxS=2.8;
     SnowIce_Param.WatFreez_Th=-8;

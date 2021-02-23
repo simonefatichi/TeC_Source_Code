@@ -239,6 +239,9 @@ end
 if  not(exist('OPT_EnvLimitGrowth','var'))
     OPT_EnvLimitGrowth = 0;
 end
+if  not(exist('OPT_WET','var'))
+    OPT_WET = 0;
+end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 for i=2:NN
     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -419,6 +422,9 @@ for i=2:NN
     %%%%%%% %%%%%%%
     Qi_in(i,:)=Qi_out(i-1,:);
     q_runon(i)=0; %Rd(i-1)+Rh(i-1);
+    if OPT_WET > 0 %%% Wetland option with water remaining in place
+        q_runon(i)=OPT_WET*(Rd(i-1)+Rh(i-1));
+    end
     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

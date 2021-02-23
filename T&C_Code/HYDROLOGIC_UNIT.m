@@ -62,7 +62,7 @@ sinalp=sin(atan(Slo_top));  %% [-]
 %%%%%%%% Water Logging
 ydepth = 0.001*q_runon*dth; %%[m]  su Asur
 %%%%
-Pr_sno_day = sum(Pr_sno_day*dth); %%[mm]
+Pr_sno_day = sum(Pr_sno_day(2:end)*dth); %%[mm]
 %%%% 
 Ccrown_L=sum((ZR95_L>0).*Ccrown); 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -173,7 +173,7 @@ else
 end
 %%%%%
 %%%%% Incoming Longwave  %%%%%%%%%%%
-[Latm]=Incoming_Longwave(Ta,ea,N); % Latm Incoming LongWave Radiation [W/m^2]
+[Latm,N]=Incoming_Longwave(Ta,ea,N); % Latm Incoming LongWave Radiation [W/m^2]
 %%%%% Sun height
 [h_S]=SetSunVariables(Datam,DeltaGMT,Lon,Lat,t_bef,t_aft);
 %%%%%%%%%%%%%%%%%%%%%%%%% Account for the water logging
@@ -203,7 +203,7 @@ clear SAB1 SAB2 SAD1 SAD2 PARB PARD
     fapar_H,fapar_L,SIF_H,SIF_L,...
     gsr_H,Psi_x_H,Psi_l_H,Jsx_H,Jxl_H,Kleaf_H,Kx_H,Vx_H,Vl_H,...
     gsr_L,Psi_x_L,Psi_l_L,Jsx_L,Jxl_L,Kleaf_L,Kx_L,Vx_L,Vl_L,...
-    dQVEG,HV,QEV,TsV,WAT,q_run,EG_dis,J_Hdis,J_Ldis,Imelt,Smelt]=SVAT_UNIT(Tstm0,Pr,Ta,Ds,Ws,zatm,Tstm1,dt,ea,Latm,Pre,...
+    dQVEG,HV,QEV,TsV,WAT,q_run,EG_dis,J_Hdis,J_Ldis,Imelt,Smelt]=SVAT_UNIT(Tstm0,Pr,Ta,Ds,Ws,zatm,Tstm1,dt,ea,Latm,N,Pre,...
     OStm1,Psi_stm1_H,Psi_stm1_L,gsr_Htm1,gsr_Ltm1,Exwat_Htm1,Exwat_Ltm1,....
     LAI_H,SAI_H,LAI_L,SAI_L,LAIdead_H,LAIdead_L,BLit,Sllit,Kct,TminS,TmaxS,...
     Sp_SN_In,Sp_LAI_L_In,Sp_LAI_H_In,h_S,...

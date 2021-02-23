@@ -1,7 +1,7 @@
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%  %%%%%%%%%%%%
 %   Subfunction Incoming_Longwave            %%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-function[Latm]=Incoming_Longwave(Ta,ea,N)
+function[Latm,N]=Incoming_Longwave(Ta,ea,N)
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%% Juszak and Pellicciotti 2013; Flerchinger et al 2009 
 if N<=1 %% N is cloudiness
@@ -34,5 +34,14 @@ if N<=1 %% N is cloudiness
     Latm = K.*e_cs.*sigmaSB.*(Ta_k).^4; %% LONG_WAVE RADIATION Incoming  [W/m^2]
 else %% N is the Longwawe radiation incoming
     Latm=N;
+    %%%%%%%%%%%% Cloudiness is back computed 
+    Ta_k = Ta +273.15; %% air temperature  [K]
+    sigmaSB = 5.6704e-8; % Stefan-Boltzmann constant [W/m^2 K4]  %%
+    w=4.65*ea./Ta_k; %%[kg/m2] precipitable water [Prata 1996]
+    e_cs = (59.38+113.7*(Ta_k/273.16).^6 +96.96*sqrt(w./25))./(sigmaSB.*Ta_k.^4); %% Dilley and O'Brien 1998
+    K = Latm./(e_cs.*sigmaSB.*(Ta_k).^4); %%[-]
+    K(K<1)=1; 
+    N=sqrt(5.8824*(K-1)); %%%%  [TVA, 1972]
+    N(N>1)=1; N(N<0)=0;
 end
 end
