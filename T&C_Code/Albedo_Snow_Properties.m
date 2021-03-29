@@ -186,7 +186,10 @@ switch ANS
         
         if Asno>0.85
             Asno=0.85;
-        end
+        elseif isnan(Asno)
+            Asno=a_u; %So if=NaN (only occurs under conditions of Csno=1, SWE=0 and ATa=0, so its cold but the snow has melted, therefore assign the underlying albedo)
+        end 
+        
         snow_alb.dir_vis = Asno;
         snow_alb.dir_nir = Asno;
         snow_alb.dif_vis = Asno;
