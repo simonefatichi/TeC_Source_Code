@@ -3,11 +3,6 @@
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%% SOIL AND HYDROLOGICAL PARAMETER
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%%%%%%%%%%%%%%%%%%% PARAMETERS AND INITIAL CONDITION %%%%%%%%%%%%%%%%%%%%%%
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%%% SOIL AND HYDROLOGICAL PARAMETER
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 cur_dir=cd;
 cd(Directory)
 %%%%%%%%%%%%%%%%
@@ -66,7 +61,6 @@ alpVG= alpVG*ones(1,ms); %% [1/mm]
 nVG= nVG*ones(1,ms); %% [-]
 Ks_Zs= Ks*ones(1,ms); %%[mm/h]
 %%%%%
-Ks_Zs(end)=300; 
 %%%%%%%%%%% Matric Potential
 Kfc = 0.2; %% [mm/h]
 Phy = 10000; %% [kPa]
@@ -227,10 +221,8 @@ Sllit = 2 ; %%% Litter Specific Leaf area [m2 Litter / kg DM]
 Sl_H = [0.016]; % 0.018 0.05 -0.005 [m^2 gC] specific leaf area of  biomass [m^2 /gC]
 Nl_H= [30]; %[gC/gN ] Leaf Carbon-Nitrogen ratio 
 [Stoich_H(1)]=Veg_Stoichiometric_Parameter(Nl_H(1));
-%PLNR_H = 0.033; %% Percentage of Leaf N in Rubisco  [kgNRubisco / kgN]
 r_H = [0.030];  %% [0.066 -0.011]respiration rate at 10° [gC/gN d ]
 gR_H= [0.25]; % [0.22 - 0.28] growth respiration  [] -- [Rg/(GPP-Rm)]
-%LAI_max_H= [2.0 10.0];
 aSE_H= [1]; %%% Plant Type -- 1 Seasonal Plant --  0 Evergreen  -- 2 Grass species -- 3 Crops 
 dd_max_H= [1/365]; %%%0.005  [1/d]  0.0250 -- 0.005-0.025 death maximum for drought
 dc_C_H =  2/365; %% [1/ d°C] -- [Factor of increasing mortality]
@@ -265,10 +257,8 @@ ff_r_H= [0.1]; %% Reference allocation to Fruit and reproduction
 Sl_L = [0.035]; % 0.05 -0.005 [m^2 gC] specific leaf area of  biomass [m^2 /gC]
 Nl_L= [23]; %[gC/gN ] Leaf Carbon-Nitrogen ratio
 [Stoich_L(1)]=Veg_Stoichiometric_Parameter(Nl_L(1));
-%PLNR_L = 0.033; %% Percentage of Leaf N in Rubisco  [kgNRubisco / kgN]
 r_L = [0.060];  %% [0.066 -0.011]respiration rate at 10° [gC/gN d ]
 gR_L= [0.25]; % [0.22 - 0.28] growth respiration  [] -- [Rg/(GPP-Rm)]
-%LAI_max_L= [2.0 10.0];
 aSE_L= [2]; %%% Plant Type -- 1 Seasonal Plant --  0 Evergreen  -- 2 Grass species -- 3 Crops
 dd_max_L= [1/45];%%%0.005  [1/d]  0.0250 -- 0.005-0.025 death maximum for drought
 dc_C_L = [7/365]; %% [1/ d°C] -- [Factor of increasing mortality]
@@ -294,17 +284,14 @@ LDay_cr_L = [10.7]; %%%  Threshold for senescence day light [h]
 Klf_L =  1/50 ; % [1/83]; %% Dead Leaves fall turnover [1/d]
 fab_L = 0.0; %% fraction above-ground sapwood and reserve
 fbe_L = 1.0; %% fraction below-ground sapwood and reserve
-[ParEx_L(1)]=Exudation_Parameter(1); 
+[ParEx_L(1)]=Exudation_Parameter(1);
 ff_r_L= [0.1];
 [Mpar_L(1)]=Vegetation_Management_Parameter;
-Mpar_L(1).jDay_cut=[100:12:270];
-Mpar_L(1).LAI_cut=[2.88]; %% LAI of grass after cut %
-%%%%%%%%%%%%% PRODUCTIVITY
-%%% Maximum Rubisco Capacity
-%[Vmax_H]=Maximum_Rubisco_Capacity(Sl_H,PLNR_H,Nl_H);
-%[Vmax_L]=Maximum_Rubisco_Capacity(Sl_L,PLNR_L,Nl_L);
+Mpar_L(1).jDay_cut =[132  168  202  238  292];
+Mpar_L(1).LAI_cut =[1.68]; %% LAI of grass after cut %% 2.65 Height of 15cm more or less
+%%%%%%%%%%%%%
 Vmax_H = [0]; %55
-Vmax_L = [96]; %35
+Vmax_L = [86]; %35
 %%%%%%%%%%%%%%%%%%%%%%
 L_day=zeros(NNd,1);
 for j=2:24:NN
@@ -333,7 +320,7 @@ SAI_H(1,:) = [0]; %%
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%5
 LAI_L(1,:)=[1.2]; %
-B_L(1,:,:)= [83 0 480 339 5 0 27 0]; %% 
+B_L(1,:,:)= [61 0 343 250 3 0 60 0]; %% 
 %B_L(1,:,:)= [0 0 474 343]; %% 
 Rrootl_L(1,:) = [3800] ; 
 PHE_S_L(1,:)=[3];

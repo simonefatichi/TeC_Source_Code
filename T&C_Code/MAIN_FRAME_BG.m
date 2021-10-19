@@ -63,6 +63,7 @@ Ws_under=zeros(NN,1);
 if  not(exist('IrD','var'))
     IrD=zeros(NN,1);
 end
+NetWatWet=zeros(NN,1);
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 r_litter=zeros(NN,cc);
 %%%
@@ -241,6 +242,11 @@ if  not(exist('OPT_EnvLimitGrowth','var'))
 end
 if  not(exist('OPT_WET','var'))
     OPT_WET = 0;
+else
+    if  not(exist('Wlev','var'))
+        Wlev=zeros(NN,1);
+    end
+    Wlevm1 = Rd(1)+Rh(1);
 end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 for i=2:NN
@@ -422,8 +428,12 @@ for i=2:NN
     %%%%%%% %%%%%%%
     Qi_in(i,:)=Qi_out(i-1,:);
     q_runon(i)=0; %Rd(i-1)+Rh(i-1);
-    if OPT_WET > 0 %%% Wetland option with water remaining in place
-        q_runon(i)=OPT_WET*(Rd(i-1)+Rh(i-1));
+    if OPT_WET == 1 %%% Wetland option with water standing in the surface
+        q_runon(i)=Wlev(i);
+        if isnan(Wlev(i))
+            q_runon(i)=Wlevm1;
+        end
+        NetWatWet(i) = q_runon(i) - Wlevm1 ;
     end
     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -471,6 +481,9 @@ for i=2:NN
     ALB(i)= SAB1(i)/STOT*snow_alb.dir_vis + SAD1(i)/STOT*snow_alb.dif_vis + ...
         SAB2(i)/STOT*snow_alb.dir_nir + SAD2(i)/STOT*snow_alb.dif_nir;
     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+    if OPT_WET == 1
+        Wlevm1 = Rd(i)+Rh(i);
+    end
     %%% v-coordinate
     CK1(i) = f(i)*dth*Asur*Ared + sum(V(i-1,:) - V(i,:))*Asur*Ared + sum(Vice(i-1,:) - Vice(i,:))*Asur*Ared  - EG(i)*dth - Lk(i)*dth ...
         - sum(Qi_out(i,:))*dth -Rd(i) -sum(Jsx_L(i,:)).*dth -sum(Jsx_H(i,:)).*dth  + sum(Qi_in(i,:))*dth  ;

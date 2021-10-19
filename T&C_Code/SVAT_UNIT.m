@@ -161,8 +161,17 @@ for i=1:length(Ccrown)
         rs_sunH(i) = Inf; rs_shdH(i) = Inf; An_H(i) = 0; Rdark_H(i)=0;  Ci_sunH(i)=0;  Ci_shdH(i)=0; Lpho_H(i)=0; SIF_H(i) =0 ;
     end
     %%%%%%%%%%%%%%%%
-    if (LAI_L(i) > 0) && (Csno == 0) &&  (ydepth < hc_L(i)) && (Cice == 0)
+    if (LAI_L(i) > 0) && (Csno == 0) && (Cice == 0)
         %%%%%%%%%%%%
+        %%% Light attenuation in water -- // very simplified not
+        %%% considering other diffusive processes and anaerobic conditions  
+        if ydepth > hc_L(i)
+            Kdwat=2.0;   %% 0.4-3.2 m-1 
+            Atten = exp(-Kdwat*(ydepth - hc_L(i))); 
+            PAR_shd_L(i)=0.5*Rabsb_wat(i)*Atten; 
+            Kopt_L(i)=0.5; 
+        end
+        %%%%%%%%%% 
         %ran = (1/((0.4^2)*Ws))*(log((zatm-disp_h)/zom))^2 + rap_H(i); %%% Neutral aerodynamic resistance  %%[s/m]
         if hc_H(i) > 0
             ran = (1/((0.4^2)*Ws_undertm1))*(log((hc_L(i)+2-disp_h_L)/zom_L))^2 ; %%% Neutral aerodynamic resistance  %%[s/m]
