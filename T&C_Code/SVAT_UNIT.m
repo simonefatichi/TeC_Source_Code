@@ -119,7 +119,7 @@ dw_SNO =  min(1,In_SWEtm1/In_max_SWE)*(In_max_SWE>0); %% Snow Cover Fraction Fir
     RabsbSun_vegL,RabsbShd_vegL,Rabsb_soiL,PAR_sun_L,PAR_shd_L,FsunH,FshdH,...
     FsunL,FshdL,Kopt_H,Kopt_L,fapar_H,fapar_L,NDVI,ALB,Rabsb_sno,Rabsb_bare,Rabsb_urb,Rabsb_wat,Rabsb_rock,Rabsb_ice,Rabsb_deb,...
     soil_alb,e_gr,e_sur]=ShortwaveFluxes(Ccrown,Cbare,Crock,Curb,Cwat,Csno,Cice,...
-    Rsw,PAR,SvF,dw_SNO,hc_L,SNDtm1,ydepth,ICE_Dtm1,Cdeb,Deb_Par,h_S,snow_albtm1,Aice,OS,Color_Class,OM_H,OM_L,...
+    Rsw,PAR,SvF,dw_SNO,hc_H,hc_L,SNDtm1,ydepth,ICE_Dtm1,Cdeb,Deb_Par,h_S,snow_albtm1,Aice,OS,Color_Class,OM_H,OM_L,...
     LAI_H,SAI_H,LAIdead_H,LAI_L,SAI_L,LAIdead_L,PFT_opt_H,PFT_opt_L);
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -161,17 +161,8 @@ for i=1:length(Ccrown)
         rs_sunH(i) = Inf; rs_shdH(i) = Inf; An_H(i) = 0; Rdark_H(i)=0;  Ci_sunH(i)=0;  Ci_shdH(i)=0; Lpho_H(i)=0; SIF_H(i) =0 ;
     end
     %%%%%%%%%%%%%%%%
-    if (LAI_L(i) > 0) && (Csno == 0) && (Cice == 0)
+    if (LAI_L(i) > 0) && (Csno == 0) && (Cice == 0) && (ydepth-0.15 < hc_L(i))
         %%%%%%%%%%%%
-        %%% Light attenuation in water -- // very simplified not
-        %%% considering other diffusive processes and anaerobic conditions  
-        if ydepth > hc_L(i)
-            Kdwat=2.0;   %% 0.4-3.2 m-1 
-            Atten = exp(-Kdwat*(ydepth - hc_L(i))); 
-            PAR_shd_L(i)=0.5*Rabsb_wat(i)*Atten; 
-            Kopt_L(i)=0.5; 
-        end
-        %%%%%%%%%% 
         %ran = (1/((0.4^2)*Ws))*(log((zatm-disp_h)/zom))^2 + rap_H(i); %%% Neutral aerodynamic resistance  %%[s/m]
         if hc_H(i) > 0
             ran = (1/((0.4^2)*Ws_undertm1))*(log((hc_L(i)+2-disp_h_L)/zom_L))^2 ; %%% Neutral aerodynamic resistance  %%[s/m]

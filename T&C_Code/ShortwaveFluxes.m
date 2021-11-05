@@ -5,7 +5,7 @@ function[RabsbSun_vegH,RabsbShd_vegH,Rabsb_soiH,PAR_sun_H,PAR_shd_H,...
     RabsbSun_vegL,RabsbShd_vegL,Rabsb_soiL,PAR_sun_L,PAR_shd_L,FsunH,FshdH,...
     FsunL,FshdL,Kopt_H,Kopt_L,fapar_H,fapar_L,NDVI,ALB,Rabsb_sno,Rabsb_bare,Rabsb_urb,Rabsb_wat,Rabsb_rock,Rabsb_ice,Rabsb_deb,...
     soil_alb,e_gr,e_sur]=ShortwaveFluxes(Ccrown,Cbare,Crock,Curb,Cwat,Csno,Cice,...
-    Rsw,PAR,SvF,dw_SNO,hc_L,SnoDep,ydepth,IceDep,Cdeb,Deb_Par,h_S,snow_alb,Aice,OS,Color_Class,OM_H,OM_L,...
+    Rsw,PAR,SvF,dw_SNO,hc_H,hc_L,SnoDep,ydepth,IceDep,Cdeb,Deb_Par,h_S,snow_alb,Aice,OS,Color_Class,OM_H,OM_L,...
     LAI_H,SAI_H,LAId_H,LAI_L,SAI_L,LAId_L,PFT_opt_H,PFT_opt_L)
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%% INPUT
@@ -104,19 +104,27 @@ for i=1:cc
     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
     %%% Water Logging
     if ydepth > 0 && Csno == 0
+        dw_WatH= min(1,ydepth./hc_H(i));
+        dw_WatL= min(1,ydepth./hc_L(i));
+        %%% 
         [RabsbSun_vegH(i),RabsbShd_vegH(i),Rabsb_soiH(i),Rrfl_vis_vegH(i),Rrfl_nir_vegH(i),PAR_sun_H(i),PAR_shd_H(i),...
             RabsbSun_vegL(i),RabsbShd_vegL(i),Rabsb_soiL(i),Rrfl_vis_vegL(i),Rrfl_nir_vegL(i),PAR_sun_L(i),PAR_shd_L(i),FsunH(i),FshdH(i),...
-            FsunL(i),FshdL(i),Kopt_H(i),Kopt_L(i)]=ShortwaveFluxesVEG(Rsw,PAR,SvF,...
-            LAI_H(i),SAI_H(i),LAId_H(i),LAI_L(i),SAI_L(i),LAId_L(i),PFT_opt_H(i),PFT_opt_L(i),sur_alb,soil_alb,h_S,1,1,hc_L(i),ydepth,Rabsb_wat);
+            FsunL(i),FshdL(i),Kopt_H(i),Kopt_L(i)]=ShortwaveFluxes_SUBM_VEG(Rsw,PAR,SvF,...
+            LAI_H(i),SAI_H(i),LAId_H(i),LAI_L(i),SAI_L(i),LAId_L(i),PFT_opt_H(i),PFT_opt_L(i),sur_alb,h_S,dw_WatH,dw_WatL,hc_H(i),hc_L(i),ydepth);
         %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
     end
     %%% Glacier
     if Cice == 1 && Csno == 0
         if Cdeb == 0
+            if (LAI_H(i)+SAI_H(i)+LAId_H(i))>0 
+                dw_ICE= min(1,IceDep./hc_H(i)); 
+            else
+                dw_ICE=1; 
+            end 
             [RabsbSun_vegH(i),RabsbShd_vegH(i),Rabsb_soiH(i),Rrfl_vis_vegH(i),Rrfl_nir_vegH(i),PAR_sun_H(i),PAR_shd_H(i),...
                 RabsbSun_vegL(i),RabsbShd_vegL(i),Rabsb_soiL(i),Rrfl_vis_vegL(i),Rrfl_nir_vegL(i),PAR_sun_L(i),PAR_shd_L(i),FsunH(i),FshdH(i),...
                 FsunL(i),FshdL(i),Kopt_H(i),Kopt_L(i)]=ShortwaveFluxesVEG(Rsw,PAR,SvF,...
-                LAI_H(i),SAI_H(i),LAId_H(i),LAI_L(i),SAI_L(i),LAId_L(i),PFT_opt_H(i),PFT_opt_L(i),ice_alb,soil_alb,h_S,Cice,1,hc_L(i),IceDep,Rabsb_ice);
+                LAI_H(i),SAI_H(i),LAId_H(i),LAI_L(i),SAI_L(i),LAId_L(i),PFT_opt_H(i),PFT_opt_L(i),ice_alb,soil_alb,h_S,Cice,dw_ICE,hc_L(i),IceDep,Rabsb_ice);
         else
             %%% Glacier with debris 
             [RabsbSun_vegH(i),RabsbShd_vegH(i),Rabsb_soiH(i),Rrfl_vis_vegH(i),Rrfl_nir_vegH(i),PAR_sun_H(i),PAR_shd_H(i),...
@@ -287,7 +295,7 @@ else
                             PAR,LAI_L,SAI_L,LAId_L,Kopt_L,om_vis_vg_L,soil_alb,Iup_L,Idn_L,SvF);
                     end
                     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-                else %%%%   Vegetation L cover by snow
+                else %%%%   Vegetation L covered by snow
                     Rabsb_soiL=Rabsb_sno;
                     %%%
                     RabsbSun_vegL=0;
@@ -319,6 +327,180 @@ else
 end
 end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+%%%%%%%%%%%%%%%%%%%%%%
+function[RabsbSun_vegH,RabsbShd_vegH,Rabsb_soiH,Rrfl_vis_vegH,Rrfl_nir_vegH,PAR_sun_H,PAR_shd_H,...
+    RabsbSun_vegL,RabsbShd_vegL,Rabsb_soiL,Rrfl_vis_vegL,Rrfl_nir_vegL,PAR_sun_L,PAR_shd_L,FsunH,FshdH,...
+    FsunL,FshdL,Kopt_H,Kopt_L]=ShortwaveFluxes_SUBM_VEG(Rsw,PAR,SvF,...
+    LAI_H,SAI_H,LAId_H,LAI_L,SAI_L,LAId_L,PFT_opt_H,PFT_opt_L,sur_alb,h_S,dw_WatH,dw_WatL,hc_H,hc_L,ydepth)
+%%%%%%%%  Light attenuation in water -- // very simplified
+%%%%
+Kdwat=2.0;   %% 0.4-3.2 m-1  Light attenuation coefficient in water 
+%%%%% INPUT
+%%% Variables:
+% Rsw  shortwave [W/m^2]
+% PAR PAR radition [W/m^2]
+% ShF shadow factor
+% SvF sky view factor
+%%% LAI_H SAI_H LAI_L SAI_L
+%%% PFT_opt_H PFT_opt_L
+%%% h_S
+%%% Cwat
+%%% dw_wat
+%%% hc_L
+%%% ydepth
+%%% sur_alb
+%%% soil_alb
+%Rsw.dir_vis= Rsw.dir_vis;
+%Rsw.dir_nir= Rsw.dir_nir;
+%%%
+%Rsw.dif_vis = Rsw.dif_vis;
+%Rsw.dif_nir = Rsw.dif_nir;
+%%%
+%PAR.dir = PAR.dir;
+%PAR.dif = PAR.dif;
+%%%%%%%% OUTPUT
+%%%    Rabsb_vegH,Rabsb_soiH,NDVI_H,PAR_sun_H,PAR_shd_H,FsunH,FshdH
+%%%    Rabsb_vegL,Rabsb_soiL,NDVI_L,PAR_sun_L,PAR_shd_L,FsunL,FshdL
+%%%%%%%%%%%%%%%%%%%%%%%
+if h_S <= 0 %%%%% NIGHT
+    RabsbSun_vegH=0; RabsbShd_vegH=0;Rabsb_soiH=0;Rrfl_vis_vegH=0;Rrfl_nir_vegH=0;PAR_sun_H=0;PAR_shd_H=0;FsunH=0; FshdH=1; Kopt_H=Inf;
+    RabsbSun_vegL=0; RabsbShd_vegL=0;Rabsb_soiL=0;Rrfl_vis_vegL=0;Rrfl_nir_vegL=0;PAR_sun_L=0;PAR_shd_L=0;FsunL=0; FshdL=1; Kopt_L=Inf;
+else
+    %%% DAYLIGHT-TIME
+    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+    %%%%%  Iup Idn alb Rsw --->  .dir_vis .dir_nir .dif_vis .dif_nir
+    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+    if (LAI_H+SAI_H+LAId_H)>0 && (LAI_L+SAI_L+LAId_L)>0  %%%%%%% BOTH VEGETATION ARE PRESENT
+        %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+        if (ydepth < hc_L)  %%%  Height of water -- Less than Vegetation L
+            [Iup_L,Idn_L,Kopt_L,om_vis_vg_L]=Canopy_Radiative_Transfer(PFT_opt_L,sur_alb,h_S,LAI_L,SAI_L,LAId_L,dw_WatL);
+            %%%%% 
+            [Iup_H,Idn_H,Kopt_H,om_vis_vg_H]=Canopy_Radiative_Transfer(PFT_opt_H,Iup_L,h_S,LAI_H,SAI_H,LAId_H,dw_WatH);
+            %%%%%%%%%%%%%%%%%%
+            PARL.dir=PAR.dir*(exp(-Kopt_H*(LAI_H+SAI_H+LAId_H)));
+            PARL.dif=PAR.dif*Idn_H.dif_vis + PAR.dir*Idn_H.dir_vis;
+            %%%%%%%%%%%%%%%%%%%%%%%%
+            RswL.dir_vis =Rsw.dir_vis*(exp(-Kopt_H*(LAI_H+SAI_H+LAId_H)));
+            RswL.dir_nir =Rsw.dir_nir*(exp(-Kopt_H*(LAI_H+SAI_H+LAId_H)));
+            RswL.dif_vis =Rsw.dif_vis*Idn_H.dif_vis + Rsw.dir_vis*Idn_H.dir_vis;
+            RswL.dif_nir= Rsw.dif_nir*Idn_H.dif_nir + Rsw.dir_nir*Idn_H.dir_nir;
+            %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+            [RabsbSun_vegH,RabsbShd_vegH,Rabsb_soiH,PAR_sun_H,PAR_shd_H,FsunH,FshdH,Rrfl_vis_vegH,Rrfl_nir_vegH]=ShortwaveFluxesVEG_unit(Rsw,...
+                PAR,LAI_H,SAI_H,LAId_H,Kopt_H,om_vis_vg_H,Iup_L,Iup_H,Idn_H,SvF);
+            %%%
+            [RabsbSun_vegL,RabsbShd_vegL,Rabsb_soiL,PAR_sun_L,PAR_shd_L,FsunL,FshdL,Rrfl_vis_vegL,Rrfl_nir_vegL]=ShortwaveFluxesVEG_unit(RswL,...
+                PARL,LAI_L,SAI_L,LAId_L,Kopt_L,om_vis_vg_L,sur_alb,Iup_L,Idn_L,1);
+            %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+            Rabsb_soiH = 0;
+        else %%%%   Vegetation L covered by water 
+            [Iup_H,Idn_H,Kopt_H,om_vis_vg_H]=Canopy_Radiative_Transfer(PFT_opt_H,sur_alb,h_S,LAI_H,SAI_H,LAId_H,dw_WatH);
+            %%%%%%%%%%%%%%%%%%
+            %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+            [RabsbSun_vegH,RabsbShd_vegH,Rabsb_soiH,PAR_sun_H,PAR_shd_H,FsunH,FshdH,Rrfl_vis_vegH,Rrfl_nir_vegH]=ShortwaveFluxesVEG_unit(Rsw,...
+                PAR,LAI_H,SAI_H,LAId_H,Kopt_H,om_vis_vg_H,sur_alb,Iup_H,Idn_H,SvF);
+            %%%%%%%%%%%%%%%
+            %%%% Low vegetation covered by water 
+            [Iup_L,Idn_L,Kopt_L,om_vis_vg_L]=Canopy_Radiative_Transfer(PFT_opt_L,sur_alb,h_S,LAI_L,SAI_L,LAId_L,dw_WatL);
+            %%%
+            Atten = exp(-Kdwat*(ydepth - hc_L)); 
+            %%%
+            PARL.dir=PAR.dir*(exp(-Kopt_H*(LAI_H+SAI_H+LAId_H)));
+            PARL.dif=PAR.dif*Idn_H.dif_vis + PAR.dir*Idn_H.dir_vis;
+            RswL.dir_vis =Rsw.dir_vis*(exp(-Kopt_H*(LAI_H+SAI_H+LAId_H)));
+            RswL.dir_nir =Rsw.dir_nir*(exp(-Kopt_H*(LAI_H+SAI_H+LAId_H)));
+            RswL.dif_vis =Rsw.dif_vis*Idn_H.dif_vis + Rsw.dir_vis*Idn_H.dir_vis;
+            RswL.dif_nir= Rsw.dif_nir*Idn_H.dif_nir + Rsw.dir_nir*Idn_H.dir_nir;
+            %%%
+            PARL.dir=PARL.dir*Atten; 
+            PARL.dif=PARL.dif*Atten; 
+            RswL.dir_vis=RswL.dir_vis*Atten; 
+            RswL.dir_nir=RswL.dir_nir*Atten; 
+            RswL.dif_vis=RswL.dif_vis*Atten; 
+            RswL.dif_nir=RswL.dif_nir*Atten; 
+            %%%%% 
+            [RabsbSun_vegL,RabsbShd_vegL,Rabsb_soiL,PAR_sun_L,PAR_shd_L,FsunL,FshdL,Rrfl_vis_vegL,Rrfl_nir_vegL]=ShortwaveFluxesVEG_unit(RswL,...
+                PARL,LAI_L,SAI_L,LAId_L,Kopt_L,om_vis_vg_L,sur_alb,Iup_L,Idn_L,1);
+            %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+            Rabsb_soiH = 0;
+        end
+        %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+    else
+        if (LAI_H+SAI_H+LAId_H)>0  %%% ONLY HIGH VEGETATION
+            %%%%
+            if (ydepth < hc_H)
+                [Iup_H,Idn_H,Kopt_H,om_vis_vg_H]=Canopy_Radiative_Transfer(PFT_opt_H,sur_alb,h_S,LAI_H,SAI_H,LAId_H,dw_WatH);
+                %%%
+                [RabsbSun_vegH,RabsbShd_vegH,Rabsb_soiH,PAR_sun_H,PAR_shd_H,FsunH,FshdH,Rrfl_vis_vegH,Rrfl_nir_vegH]=ShortwaveFluxesVEG_unit(Rsw,...
+                    PAR,LAI_H,SAI_H,LAId_H,Kopt_H,om_vis_vg_H,sur_alb,Iup_H,Idn_H,SvF);
+                %%%%%%%%%
+            else %%%   Vegetation H covered by water
+                [Iup_H,Idn_H,Kopt_H,om_vis_vg_H]=Canopy_Radiative_Transfer(PFT_opt_H,sur_alb,h_S,LAI_H,SAI_H,LAId_H,dw_WatH);
+                %%%%
+                Atten = exp(-Kdwat*(ydepth - hc_H));
+                PAR.dir=PAR.dir*Atten;
+                PAR.dif=PAR.dif*Atten;
+                Rsw.dir_vis=Rsw.dir_vis*Atten;
+                Rsw.dir_nir=Rsw.dir_nir*Atten;
+                Rsw.dif_vis=Rsw.dif_vis*Atten;
+                Rsw.dif_nir=Rsw.dif_nir*Atten;
+                %%%
+                [RabsbSun_vegH,RabsbShd_vegH,Rabsb_soiH,PAR_sun_H,PAR_shd_H,FsunH,FshdH,Rrfl_vis_vegH,Rrfl_nir_vegH]=ShortwaveFluxesVEG_unit(Rsw,...
+                    PAR,LAI_H,SAI_H,LAId_H,Kopt_H,om_vis_vg_H,sur_alb,Iup_H,Idn_H,SvF);
+            end
+            RabsbSun_vegL=0;
+            RabsbShd_vegL=0;
+            Rabsb_soiL=0;
+            Rrfl_vis_vegL=0;Rrfl_nir_vegL=0; Kopt_L =0 ;
+            PAR_sun_L=0;PAR_shd_L=0;FsunL=0;FshdL=0;
+            %%%
+        else
+            if (LAI_L+SAI_L+LAId_L)>0   %%% ONLY LOW VEGETATION
+                if (ydepth < hc_L)  %%%  Height of water -- Less than Vegetation L
+                        [Iup_L,Idn_L,Kopt_L,om_vis_vg_L]=Canopy_Radiative_Transfer(PFT_opt_L,sur_alb,h_S,LAI_L,SAI_L,LAId_L,dw_WatL);
+                        %%%
+                        [RabsbSun_vegL,RabsbShd_vegL,Rabsb_soiL,PAR_sun_L,PAR_shd_L,FsunL,FshdL,Rrfl_vis_vegL,Rrfl_nir_vegL]=ShortwaveFluxesVEG_unit(Rsw,...
+                            PAR,LAI_L,SAI_L,LAId_L,Kopt_L,om_vis_vg_L,sur_alb,Iup_L,Idn_L,SvF);
+                        %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+                else %%%%   Vegetation L covered by water
+                    [Iup_L,Idn_L,Kopt_L,om_vis_vg_L]=Canopy_Radiative_Transfer(PFT_opt_L,sur_alb,h_S,LAI_L,SAI_L,LAId_L,dw_WatL);
+                    %%%%
+                    Atten = exp(-Kdwat*(ydepth - hc_L));
+                    PAR.dir=PAR.dir*Atten;
+                    PAR.dif=PAR.dif*Atten;
+                    Rsw.dir_vis=Rsw.dir_vis*Atten;
+                    Rsw.dir_nir=Rsw.dir_nir*Atten;
+                    Rsw.dif_vis=Rsw.dif_vis*Atten;
+                    Rsw.dif_nir=Rsw.dif_nir*Atten;
+                    %%%
+                    [RabsbSun_vegL,RabsbShd_vegL,Rabsb_soiL,PAR_sun_L,PAR_shd_L,FsunL,FshdL,Rrfl_vis_vegL,Rrfl_nir_vegL]=ShortwaveFluxesVEG_unit(Rsw,...
+                        PAR,LAI_L,SAI_L,LAId_L,Kopt_L,om_vis_vg_L,sur_alb,Iup_L,Idn_L,SvF);
+                    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+                end
+                RabsbSun_vegH=0;
+                RabsbShd_vegH=0;
+                Rabsb_soiH=0;
+                Rrfl_vis_vegH = 0; Rrfl_nir_vegH =0; Kopt_H=0;
+                PAR_sun_H=0;PAR_shd_H=0;FsunH=0;FshdH=0;
+            else
+                %%%  No Vegetation %%%%%%%%%%%%%%%%%%%%%%%%%%
+                RabsbSun_vegL=0;
+                RabsbShd_vegL=0;
+                Rabsb_soiL=0;
+                Rrfl_vis_vegL=0;Rrfl_nir_vegL=0; Kopt_L =0 ;
+                PAR_sun_L=0;PAR_shd_L=0;FsunL=0;FshdL=0;
+                RabsbSun_vegH=0;
+                RabsbShd_vegH=0;
+                Rabsb_soiH=0;
+                Rrfl_vis_vegH =0; Rrfl_nir_vegH =0; Kopt_H=0;
+                PAR_sun_H=0;PAR_shd_H=0;FsunH=0;FshdH=0;
+            end
+        end
+    end
+end
+end
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
 function[RabsbSun_veg,RabsbShd_veg,Rabsb_soi,PAR_sun,PAR_shd,Fsun,Fshd,Rrfl_vis_veg,Rrfl_nir_veg]=ShortwaveFluxesVEG_unit(Rsw,...
     PAR,LAI,SAI,LAId,Kopt,om_vis_vg,sur_alb,Iup,Idn,SvF)
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
