@@ -185,6 +185,17 @@ end
 %        RfL_Zs(j,:)= RfL_Zs(j,:)/Rto1;
 %    end
 %end
+%%%%%%%%%%%%%%%%%%%%
+%%% If root are unspecified everything to the first layer - necessary for
+%%% crops
+for j=1:cc
+    if sum(RfH_Zs(j,:))==0
+        RfH_Zs(j,1)=1;
+    end
+    if sum(RfL_Zs(j,:))==0
+        RfL_Zs(j,1)=1;
+    end
+end
 return
 
 

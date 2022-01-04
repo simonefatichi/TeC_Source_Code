@@ -177,7 +177,8 @@ Kdb =BiogeoPar.Kdb ; % [0.00014 - 0.00038] half-saturation constant of uptake of
 Kdf =BiogeoPar.Kdf ;
 mrb = SC_par(1)*BiogeoPar.mrb; % [ 1.20*1e-3 - 30*1e-3] specific maintenance factor or rate [ g C /g C day]
 mrf = SC_par(2)*BiogeoPar.mrf;
-mrm = SC_par(2)*BiogeoPar.mrm;
+mram = SC_par(2)*BiogeoPar.mram;
+mrem = SC_par(2)*BiogeoPar.mrem;
 Vpc =  BiogeoPar.Vpc; % maximum specific decomposition rate for P by EP [gC-P/gC-EP day]
 Vpl =  BiogeoPar.Vpl;
 Kpl =BiogeoPar.Kpl; % half-saturation constant for decomposition of P [gC / gsoil]
@@ -190,6 +191,8 @@ pepb = SC_par(3)*BiogeoPar.pepb; % [0.0031 - 0.031] fraction of mR for productio
 pemb =SC_par(3)*BiogeoPar.pemb;% [0.0031 - 0.031] fraction of mR for production of EM
 pepf = SC_par(3)*BiogeoPar.pepf; %
 pemf =SC_par(3)*BiogeoPar.pemf;%
+pepem = SC_par(3)*BiogeoPar.pepem; %
+pemem =SC_par(3)*BiogeoPar.pemem;%
 %%%%%%%%%% Leaching Coefficients
 lambda_C = BiogeoPar.lambda_C;
 lambda_N = BiogeoPar.lambda_N;
@@ -262,7 +265,8 @@ Kdb= Kdb*exp(-30/R*(1/(Ts+273.15) - 1/(Tref+273.15)));
 Kdf= Kdf*exp(-30/R*(1/(Ts+273.15) - 1/(Tref+273.15)));
 mrb=mrb*exp(-20/R*(1/(Ts+273.15) - 1/(Tref+273.15)));
 mrf=mrf*exp(-20/R*(1/(Ts+273.15) - 1/(Tref+273.15)));
-mrm=mrm*exp(-20/R*(1/(Ts+273.15) - 1/(Tref+273.15)));
+mram=mram*exp(-20/R*(1/(Ts+273.15) - 1/(Tref+273.15)));
+mrem=mrem*exp(-20/R*(1/(Ts+273.15) - 1/(Tref+273.15)));
 %%%%
 gd = gd*fClay2; gd(gd>1)=1; 
 %%%% Control of available space for accumulating MOC 
@@ -297,6 +301,9 @@ Cpep = 0.0134*(B(19))^(-0.5); Cpep(Cpep>3.0)=3.0;
 %Cpep = 8e-004*(B(19))^(-0.85); Cpep(Cpep>3)=3;
 pepf = knp*Cpep*pepf; %
 pemf = knp*Cpep*pemf;%
+%%%% enzyme production from EM fungi 
+pepem = knp*pepem; %
+pemem = knp*pemem; %
 %%%%%
 %%%%%%
 %pepb = rep*B(14)./(mrb*B(18)); pepb(pepb<0.0031)=0.0031; pepb(pepb>0.031)=0.031;
@@ -439,21 +446,21 @@ F5b = (1/Ecb - 1)*mrb*B(18)*(fsm*B(12))/(Kdb+(fsm*B(12)));  %% Respiration Maint
 F5f = (1/Ecf - 1)*mrf*B(19)*(fsm*B(13))/(Kdf+(fsm*B(13)));  %% Respiration Maintenance  Fungi
 F8b = (1-pepb -pemb)*mrb*B(18);  %% Microbe Bacteria  mortality
 F8f = (1-pepf -pemf)*mrf*B(19); %% Fungi  mortality
-F8am = mrm*B(20);  %% AM  mortality
-F8em = (1- pepf - pemf)*mrm*B(21);  %% EM  mortality
+F8am = mram*B(20);  %% AM  mortality
+F8em = (1- pepem - pemem)*mrem*B(21);  %% EM  mortality
 F9ep_b= pepb*mrb*B(18);  %% Enzyme Production
 F9em_b= pemb*mrb*B(18);
 F9ep_f =pepf*mrf*B(19);
 F9em_f= pemf*mrf*B(19);
-F9ep_em =pepf*mrm*B(21);
-F9em_em= pemf*mrm*B(21);
+F9ep_em =pepem*mrem*B(21);
+F9em_em= pemem*mrem*B(21);
 F10ep_b= rep*B(14); %% Enzyme Turnover
 F10ep_f= rep*B(15); %% Enzyme Turnover
 F10em_b= rem*B(16);
 F10em_f= rem*B(17);
 %%%%%%%%%%%%%%%%%%%%%
-Resp_mycAM = mrm*B(20); %%% Respiration maintenance AM-Mycorrhizal
-Resp_mycEM = mrm*B(21); %%% Respiration maintenance EM-Mycorrhizal
+Resp_mycAM = mram*B(20); %%% Respiration maintenance AM-Mycorrhizal
+Resp_mycEM = mrem*B(21); %%% Respiration maintenance EM-Mycorrhizal
 R_microbe =  F4b+F4f+F5f+F5b + Resp_mycAM + Resp_mycEM; % [gC/gsoil d]
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 Rbf = (B(12)/(B(12)+B(13))); %% Ratio of DOC - Bacteria to B+F

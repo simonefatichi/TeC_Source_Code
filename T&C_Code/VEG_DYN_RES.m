@@ -100,6 +100,8 @@ switch aSE
         end
         %%%%
         dla= dlaK*AgeL/((age_cr)^2); %% [1/d] Mortality for normal leaf age
+    case 5
+        dla= min(1/age_cr,AgeL/((age_cr)^2)); %% [1/d] Mortality as in grass
 end
 %%%%%%
 %%% Leaf Mortality to Cold Stress  Linear [Cox 2001]

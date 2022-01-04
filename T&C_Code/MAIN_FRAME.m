@@ -272,13 +272,17 @@ for i=2:NN
                 [TexC_H(j,cc),TexN_H(j,cc),TexP_H(j,cc),TexK_H(j,cc),TNIT_H(j,cc),TPHO_H(j,cc),TPOT_H(j,cc),NuLit_H(j,cc,:),Nreserve_H(j,cc),Preserve_H(j,cc),Kreserve_H(j,cc),...
                     SupN_H(j,cc),SupP_H(j,cc),SupK_H(j,cc),ISOIL_H(j,cc,:)]= Plant_Exports(B_H(j,cc,:),B_H(j-1,cc,:),NuLit_H(j-1,cc,:),...
                     Slf_H(j,cc),Sfr_H(j,cc),Swm_H(j,cc),Sll_H(j,cc),Sr_H(j,cc),Rexmy_H(j,cc,:),Stoich_H(cc),Mpar_H(cc),fab_H(cc),fbe_H(cc),RB_H(j,cc,:),...
-                    Nreserve_H(j,cc),Preserve_H(j,cc),Kreserve_H(j,cc),rNc_H(j,cc),rPc_H(j,cc),rKc_H(j,cc),ManIH(cc));
+                    Nreserve_H(j,cc),Preserve_H(j,cc),Kreserve_H(j,cc),rNc_H(j,cc),rPc_H(j,cc),rKc_H(j,cc),ManIH(cc),OPT_SoilBiogeochemistry);
                 %%%%%%%%%%%%%%%%
                 
                 %%%%%%%%%%%%%%%%%%%%%% Change in height SAI and Ccrown
                 SAI_H(j,cc) =SAI_H(j-1,cc);
                 if aSE_H(cc) == 2
                     [hc_H(j,cc)] = GrassHeight(LAI_H(j,cc),LAIdead_H(j,cc));
+                elseif aSE_H(cc) == 5
+                    [hc_H(j,cc),SAI_H(j,cc),B_H(j,:,:),Ccrown,ZR95_H,Nreserve_H(j-1:j,:),Preserve_H(j-1:j,:),Kreserve_H(j-1:j,:),TdpI_H(j-1:j,:),Bfac_weekH(j-1:j,:),RfH_Zs] = CropHeightType(LAI_H(j,cc),LAIdead_H(j,cc),cc,ZR95_H,B_H(j,:,:),...
+                        Zs,CASE_ROOT,Ccrown,Nreserve_H(j-1:j,:),Preserve_H(j-1:j,:),Kreserve_H(j-1:j,:),TdpI_H(j-1:j,:),Bfac_weekH(j-1:j,:),ManIH,Mpar_H,VegH_Param_Dyn);
+                    %%%%
                 else
                     hc_H(j,cc)= hc_H(j-1,cc); %%%[m]
                     if OPT_VCA == 1
@@ -297,7 +301,7 @@ for i=2:NN
                 
             else
                 LAI_H(j,cc)=0;B_H(j,cc,:)=0;NPP_H(j,cc)=0;ANPP_H(j,cc)=0;Rg_H(j,cc)=0;RA_H(j,cc)=0;Rms_H(j,cc)=0;
-                Rmr_H(j,cc)=0;PHE_S_H(j,cc)=0;dflo_H(j,cc)=0;AgeL_H(j,cc)=0;e_rel_H(j,cc)=0; e_relN_H(j,cc)=0;
+                Rmr_H(j,cc)=0;PHE_S_H(j,cc)=1;dflo_H(j,cc)=0;AgeL_H(j,cc)=0;e_rel_H(j,cc)=0; e_relN_H(j,cc)=0;
                 SAI_H(j,cc)=0; hc_H(j,cc)=0;
                 LAIdead_H(j,cc) =LAIdead_H(j-1,cc);
                 Sr_H(j,cc)=0;Slf_H(j,cc)=0;Sfr_H(j,cc)=0;Swm_H(j,cc)=0; Rrootl_H(j,cc)=0;
@@ -321,12 +325,15 @@ for i=2:NN
                 [TexC_L(j,cc),TexN_L(j,cc),TexP_L(j,cc),TexK_L(j,cc),TNIT_L(j,cc),TPHO_L(j,cc),TPOT_L(j,cc),NuLit_L(j,cc,:),Nreserve_L(j,cc),Preserve_L(j,cc),Kreserve_L(j,cc),...
                     SupN_L(j,cc),SupP_L(j,cc),SupK_L(j,cc),ISOIL_L(j,cc,:)]= Plant_Exports(B_L(j,cc,:),B_L(j-1,cc,:),NuLit_L(j-1,cc,:),...
                     Slf_L(j,cc),Sfr_L(j,cc),Swm_L(j,cc),Sll_L(j,cc),Sr_L(j,cc),Rexmy_L(j,cc,:),Stoich_L(cc),Mpar_L(cc),fab_L(cc),fbe_L(cc),RB_L(j,cc,:),...
-                    Nreserve_L(j,cc),Preserve_L(j,cc),Kreserve_L(j,cc),rNc_L(j,cc),rPc_L(j,cc),rKc_L(j,cc),ManIL(cc));
+                    Nreserve_L(j,cc),Preserve_L(j,cc),Kreserve_L(j,cc),rNc_L(j,cc),rPc_L(j,cc),rKc_L(j,cc),ManIL(cc),OPT_SoilBiogeochemistry);
                 
                 %%%%%%%%%%%%%%%%%%%%%% Change in height SAI and Ccrown
                 SAI_L(j,cc) =SAI_L(j-1,cc);
                 if aSE_L(cc) == 2
                     [hc_L(j,cc)] = GrassHeight(LAI_L(j,cc),LAIdead_L(j,cc));
+                elseif aSE_L(cc) == 5
+                    [hc_L(j,cc),SAI_L(j,cc),B_L(j,:,:),Ccrown,ZR95_L,Nreserve_L(j-1:j,:),Preserve_L(j-1:j,:),Kreserve_L(j-1:j,:),TdpI_L(j-1:j,:),Bfac_weekL(j-1:j,:),RfL_Zs] = CropHeightType(LAI_L(j,cc),LAIdead_L(j,cc),cc,ZR95_L,B_L(j,:,:),...
+                        Zs,CASE_ROOT,Ccrown,Nreserve_L(j-1:j,:),Preserve_L(j-1:j,:),Kreserve_L(j-1:j,:),TdpI_L(j-1:j,:),Bfac_weekL(j-1:j,:),ManIL,Mpar_L,VegL_Param_Dyn);
                 else
                     hc_L(j,cc)= hc_L(j-1,cc); %%%[m]
                     if OPT_VCA == 1
@@ -343,7 +350,7 @@ for i=2:NN
                 end
             else
                 LAI_L(j,cc)=0;B_L(j,cc,:)=0;NPP_L(j,cc)=0;ANPP_L(j,cc)=0;Rg_L(j,cc)=0;RA_L(j,cc)=0;Rms_L(j,cc)=0;
-                Rmr_L(j,cc)=0;PHE_S_L(j,cc)=0;dflo_L(j,cc)=0;AgeL_L(j,cc)=0;e_rel_L(j,cc)=0; e_relN_L(j,cc)=0;
+                Rmr_L(j,cc)=0;PHE_S_L(j,cc)=1;dflo_L(j,cc)=0;AgeL_L(j,cc)=0;e_rel_L(j,cc)=0; e_relN_L(j,cc)=0;
                 SAI_L(j,cc)=0; hc_L(j,cc)=0;
                 LAIdead_L(j,cc) =LAIdead_L(j-1,cc);
                 Sr_L(j,cc)=0;Slf_L(j,cc)=0;Sfr_L(j,cc)=0;Swm_L(j,cc)=0;  Rrootl_L(j,cc)=0;
@@ -356,6 +363,8 @@ for i=2:NN
             BLit(j,cc)= 0.0 ; % BLit(j-1,cc); % 0.100 ; %% %%[kg DM / m2]
         end
     end
+    %%%%%%% %%%%%%%
+
     %%%%%%% %%%%%%%
     if OPT_VCA == 1
         if((OPT_ALLOME == 1)&& (ZR95_L(2))>0) %%% Ad hoc solution for oil palm

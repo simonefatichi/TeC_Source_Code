@@ -21,6 +21,13 @@ Mpar.funb_nit= 0.15; %% Fraction of unburned Nitrogen
 %%%%%%%%%% Option for Girdling 
 Mpar.Date_girdling = NaN; 
 Mpar.fract_girdling = 0; 
+%%%%%%%%%%%% Options for Crops 
+Mpar.Date_sowing = NaN; 
+Mpar.Date_harvesting = NaN; 
+Mpar.Crop_B=[0 0]; %%% [gC m-2] 
+Mpar.Crop_type = NaN; 
+Mpar.Crop_root = 0; 
+Mpar.Crop_crown = 1.0; 
 %%% Option Surviving belowground / resrprouting
 Mpar.fract_resprout = 0.2; 
 %%%%%%%% Fraction of material left in the field  

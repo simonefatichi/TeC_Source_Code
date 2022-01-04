@@ -24,14 +24,15 @@ function[PHE_S,dflo,AgeL,AgeDL]= PHENOLOGY_STATE(NLeaf,AgeLtm1,dtd,...
 %%% LDay_cr length of the day  critical for senescence passage [h]
 %%% Minimum LAI to pass in Dormant Phenology
 %%% aSE  %%% PHENOLOGY KIND
-%%% -- 1 Seasonal Plant --  0 Evergreen  -- 2 Grass species -- 3 Crops
+%%% -- 1 Seasonal Plant --  0 Evergreen  -- 2 Grass species -- 3 Tropical
+%%% Evergreen -- 4 NaN -- 5 Crops -- 
 %%% mjDay maximum julian day
 %%%%%% OUTPUT
 %%% dflo [day] from Leaf onset
 %%% AgeL [day] Average Age of Leaf
 %%% PHE_S [#] Phenology State
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-if (aSE == 0) || (aSE == 1) || (aSE == 2)
+if (aSE == 0) || (aSE == 1) || (aSE == 2) || (aSE == 5) 
     PAR_th = -Inf;
 end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -104,7 +105,7 @@ switch PHE_Stm1
         end
     case 4
         dflo = dflotm1 + 1;
-        if LAI <= LAI_min || (aSE == 0) || (aSE == 2) || (aSE == 3)
+        if LAI <= LAI_min || (aSE == 0) || (aSE == 2) || (aSE == 3) || (aSE == 5)
             PHE_S = 1;
         else
             PHE_S = 4;

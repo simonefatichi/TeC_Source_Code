@@ -90,13 +90,14 @@ ff_r = Veg_Param_Dyn.ff_r(cc);
 PAR_th = Veg_Param_Dyn.PAR_th(cc);
 PsiL50=Veg_Param_Dyn.PsiL50(cc);
 PsiL00=Veg_Param_Dyn.PsiL00(cc);
+soCrop=Veg_Param_Dyn.soCrop(cc); 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 jDay_cut = Mpar.jDay_cut;
 LAI_cut = Mpar.LAI_cut;
 jDay_harv = Mpar.jDay_harv;
 B_harv = Mpar.B_harv;
 %%%%  Introducing Girdling effects 
-if  sum(abs(datenum(Datam(1),Datam(2),Datam(3),Datam(4),0,0)-Mpar.Date_girdling)<=0.99)>=1
+if  sum(abs(datenum(Datam(1),Datam(2),Datam(3),Datam(4),0,0)-Mpar.Date_girdling)<=0.49)>=1
     GirdOpt = Mpar.fract_girdling;
 else
     GirdOpt =0;
@@ -160,7 +161,7 @@ T_SPAN = [0 dtd];  %%%%%%%
 sol=ode45(@VEGETATION_DYNAMIC,T_SPAN,Btm1,OPT_VD,...
     Tam,Tsm,An,Rdark,Bfac_day,Bfac_alloc,FNC,Se_bio,Tdp_bio,dtd,GF,...
     Sl,mSl,Stoich,r,rNcR,gR,aSE,Trr,dd_max,dc_C,Tcold,drn,dsn,age_cr,PHE_Stm1,AgeLtm1,AgeDLtm1,LtR,eps_ac,...
-    Mf,Wm,fab,fbe,Klf,ff_r,sum(Rexmy),NBLeaftm1,dflotm1,Navailtm1,Pavailtm1,Kavailtm1,TBio,GirdOpt,OPT_EnvLimitGrowth,OPT_VCA);
+    Mf,Wm,fab,fbe,Klf,ff_r,sum(Rexmy),NBLeaftm1,dflotm1,Navailtm1,Pavailtm1,Kavailtm1,soCrop,TBio,GirdOpt,OPT_EnvLimitGrowth,OPT_VCA);
 %%%%%%%%%%%%%%%%%%
 B = deval(sol,dtd);
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -185,8 +186,13 @@ end
 if not(isempty(intersect(jDay,jDay_harv)))
     [B,RB(5)]= Fruit_Harvest(B,dtd,jDay,jDay_harv,B_harv);
 end
-%%%%%%%%%% Forest Logging
+%%%%%%%%%% Forest Logging 
 [B,RB,LAI,LAIdead,ManI]= Forest_Logging_Fire(B,RB,dtd,Sl,mSl,aSE,LAI,LAIdead,Datam,Mpar);
+%%%%% Crop Management 
+if (aSE==5)
+    [B,RB,LAI,LAIdead,ManI,PHE_S,dflo,AgeL,AgeDL]= Crop_Planting_Harvest(B,RB,dtd,LAI,LAIdead,PHE_S,dflo,AgeL,AgeDL,Datam,Mpar);
+end
+%%%%%
 %%%%%%%%% LAI Below Minimum
 LAI(LAI<LAI_min)=0;
 %%%  Root Properties

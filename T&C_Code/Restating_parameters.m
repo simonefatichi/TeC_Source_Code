@@ -266,8 +266,6 @@ end
 %%%%%%%%%%%%%%%%%%%%%%%%%
 
 
-
-
 %%%%% Vegetation High Parameters for vegetation dynamics
 if not(exist('aSE_H','var'))
     VegH_Param_Dyn.Sl = NaN*ones(1,cc);
@@ -344,7 +342,13 @@ else
     VegH_Param_Dyn.PsiL50 = PsiL50_H;
     VegH_Param_Dyn.PsiL00 = PsiL00_H;
 end
-
+if not(exist('soCrop_H','var'))
+    VegH_Param_Dyn.soCrop = NaN*ones(1,cc);
+    VegH_Param_Dyn.MHcrop=  NaN*ones(1,cc);
+else
+    VegH_Param_Dyn.soCrop = soCrop_H;  
+    VegH_Param_Dyn.MHcrop=  MHcrop_H; 
+end
 
 %%%%% Vegetation Low Parameters for vegetation dynamics
 if not(exist('aSE_L','var'))
@@ -421,4 +425,11 @@ else
     VegL_Param_Dyn.PAR_th =PAR_th_L;
     VegL_Param_Dyn.PsiL50 = PsiL50_L;
     VegL_Param_Dyn.PsiL00 = PsiL00_L;
+end
+if not(exist('soCrop_L','var'))
+    VegL_Param_Dyn.soCrop = NaN*ones(1,cc);
+    VegL_Param_Dyn.MHcrop=  NaN*ones(1,cc);
+else
+    VegL_Param_Dyn.soCrop = soCrop_L;  
+    VegL_Param_Dyn.MHcrop=  MHcrop_L; 
 end

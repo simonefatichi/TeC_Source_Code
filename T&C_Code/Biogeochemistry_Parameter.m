@@ -36,7 +36,8 @@ BiogeoPar.Kdb = 0.00026; % [0.00014 - 0.00038] half-saturation constant of uptak
 BiogeoPar.Kdf = 0.00026;
 BiogeoPar.mrb =  5.0*1e-3; % 15.0*1e-3; % [ 1.20*1e-3 - 30*1e-3] specific maintenance factor or rate of B [ g C /g C day]
 BiogeoPar.mrf =  2.0*1e-3; % 5.0*1e-3;
-BiogeoPar.mrm = 1.2*1e-3; % 1.5*1e-3;
+BiogeoPar.mram = 1.2*1e-3; % 1.5*1e-3; specific maintenance factor of AM 
+BiogeoPar.mrem = 1.2*1e-3; % 1.5*1e-3; specific maintenance factor of EM 
 BiogeoPar.Vpc =200;% 95; % 120; %% [4.8 - 792] maximum specific decomposition rate for POC-C by EP [gC-P/gC-EP day]
 BiogeoPar.Vpl =23; % 8; % 23;% 
 BiogeoPar.Vm = 100; % 48;% 24;  %[1.2 -528] maximum specific decomposition rate for MOC by [gC-M /gC-EM day]
@@ -49,7 +50,8 @@ BiogeoPar.pepb = 0.012; % [0.0031 - 0.031] fraction of mR for production of EP
 BiogeoPar.pemb = 0.005;% [0.0031 - 0.031] fraction of mR for production of EM
 BiogeoPar.pepf = 0.006; % [0.0031 - 0.031] fraction of mR for production of EP
 BiogeoPar.pemf = 0.010;% [0.0031 - 0.031] fraction of mR for production of EM
-
+BiogeoPar.pepem = 0.006;
+BiogeoPar.pemem = 0.010; 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 BiogeoPar.Ecf = 0.27;% 0.47; %%% Sinsbaugh et al 2016 
 BiogeoPar.Ecb = 0.27;% 0.47;
@@ -122,28 +124,29 @@ BiogeoPar.aDOP= 1;
 %%%%%%%%%%%%%%% Uptake coefficients 
 %%% Root EM AM  
 %%%--< These are dependent on the exudation/mycorrhiza allocations costs 
-Cex_root = 5; 
-kc1 = 10; kc2 = 300; kc3 = 50 ;
-kn1 = 600; kn2 = 50; kn3 = 100;
+% Cex_root = 5; 
+% kc1 = 10; kc2 = 300; kc3 = 50 ;
+% kn1 = 600; kn2 = 50; kn3 = 100;
 %kp1 = kn1/8 ; kp2 = kn2/8;  kp3 = kn3/8;
 %kk1 = kn1/2.5; kk2 = kn2/2.5; kk3 = kn3/2.5;
 %%%%%%%
-BiogeoPar.vem  = BiogeoPar.mrm/kc2; %  5e-006 ;  %%[gN /gC^2 day]
-BiogeoPar.Kvem = (kn2/kc2/365); % 45.6e-005 ; %%[gN /gC ] 
-BiogeoPar.vam =  BiogeoPar.mrm/kc3;% 3e-005 ;  %%[gN /gC^2 day]
-BiogeoPar.Kvam = (kn3/kc3/365);% 0.0055 ; %%[gN /gC ] 
-BiogeoPar.vr = (1/kc1)*Cex_root/365;% 0.0014; %%[gN /gC day]
-BiogeoPar.Kvr = (kn1/kc1/365);% 0.1644 ; %%[gN /gC ] 
+% BiogeoPar.vem  = BiogeoPar.mrm/kc2; %  5e-006 ;  %%[gN /gC^2 day]
+% BiogeoPar.Kvem = (kn2/kc2/365); % 45.6e-005 ; %%[gN /gC ] 
+% BiogeoPar.vam =  BiogeoPar.mrm/kc3;% 3e-005 ;  %%[gN /gC^2 day]
+% BiogeoPar.Kvam = (kn3/kc3/365);% 0.0055 ; %%[gN /gC ] 
+% BiogeoPar.vr = (1/kc1)*Cex_root/365;% 0.0014; %%[gN /gC day]
+% BiogeoPar.Kvr = (kn1/kc1/365);% 0.1644 ; %%[gN /gC ] 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 kn1 = 7000; kn2 = 3.5; kn3 = 2.0;
 Zr = 0.25; % [m]
 rroot =  0.5*1e-3 ; % 3.3*1e-4 ;%% [0.5-6 *10^-3] [m] root radius
-rmyc =  5*1e-6 ; % [m] hypahe radius
+rmyc_am =  5*1e-6 ; % [m] hyphae radius
+rmyc_em =  5*1e-6 ; % [m] hyphae radius
 rho_r = 122*1000; %% [gC / m^3] Root density  Jackson et al., 1997
 rho_m = 200*1000; %% [gC / m^3]
 BiogeoPar.g_r = (sqrt(2)*(rroot.^2)*(Zr.^1.5)*(rho_r.^1.5));
-BiogeoPar.g_em = (sqrt(2)*(rmyc.^2)*(Zr.^1.5)*(rho_m.^1.5));
-BiogeoPar.g_am = (sqrt(2)*(rmyc.^2)*(Zr.^1.5)*(rho_m.^1.5));
+BiogeoPar.g_em = (sqrt(2)*(rmyc_em.^2)*(Zr.^1.5)*(rho_m.^1.5));
+BiogeoPar.g_am = (sqrt(2)*(rmyc_am.^2)*(Zr.^1.5)*(rho_m.^1.5));
 BiogeoPar.vr =   2.3e-7; %(Cex_root/365)*BiogeoPar.g_r/kn1 ;%% [m^2/day]
 BiogeoPar.vem =  2.3e-7; %BiogeoPar.g_em*BiogeoPar.mrm/kn2 ;%% [m^2/day]
 BiogeoPar.vam =  2.3e-7; %BiogeoPar.g_am*BiogeoPar.mrm/kn3 ; %% [m^2/day]

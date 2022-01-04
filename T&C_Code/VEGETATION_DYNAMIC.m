@@ -6,7 +6,7 @@
 %%% Boer 2003
 function[dB]= VEGETATION_DYNAMIC(t,B,Tam,Tsm,An,Rdark,Bfac,Bfac_alloc,FNC,Se_bio,Tdp_bio,dtd,GF,...
     Sl,mSl,St,r,rNc,gR,aSE,Trr,dd_max,dc_C,Tcold,drn,dsn,age_cr,PHE_S,AgeL,AgeDL,LtR,eps_ac,...
-    Mf,Wm,fab,fbe,Klf,ff_r,Rexmy,NBLeaf,dflo,Nreserve,Preserve,Kreserve,TBio,GirdOpt,OPT_EnvLimitGrowth,OPT_VCA)
+    Mf,Wm,fab,fbe,Klf,ff_r,Rexmy,NBLeaf,dflo,Nreserve,Preserve,Kreserve,soCrop,TBio,GirdOpt,OPT_EnvLimitGrowth,OPT_VCA)
 %%%% INPUT
 %%% OUTPUT
 %%% dB [gC/m^2 d]
@@ -101,7 +101,7 @@ NPP = GPP-RA; %% Net Primary Productivity [gC / m^2 d]  NPP = An - Rg -Rmr -Rms 
 %%% fl allocation to leaf
 %%% fc allocation to carbohydrate reserve
 %%% ff allocation to flower and fruit to reproduction
-[fs1,fr1,fl1]= Allocation_Coefficients(TBio,LAI,Bfac_alloc,Se_bio,Tdp_bio,FNC,aSE,age_cr,dflo,OPT_VCA); 
+[fs1,fr1,fl1]= Allocation_Coefficients(TBio,LAI,Bfac_alloc,Se_bio,Tdp_bio,FNC,aSE,age_cr,dflo,soCrop,OPT_VCA); 
 %%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%% Maximum Growth %%%%%
@@ -112,21 +112,30 @@ end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%% PHE_S -->  DORMANT 1 - MAX GROWTH 2 - NORMAL GROWTH 3 - SENESCENCE 4 -
 %%% aSE  %%% PHENOLOGY KIND -- 1 Seasonal Plant --  0 Evergreen  -- 2 Grass species
-if (aSE == 1 || aSE == 2 ) && ((PHE_S == 4) ||  (PHE_S == 1)) %% Decidous  dormant or senescente
-    %%%%%%%%%% Constrain Reserve
-    if (B(4)< 0.67*B(2))  %%%  [2/3 of Sapwood for reserve Friend et al., 1997]
-        fc = 1;
-        fs = 0; fl = 0; fr = 0;  ff = 0;
-    else
-        fl = 0; ff = 0;
-        if aSE == 2
-            if (B(4)< 0.67*B(3)) %  [2/3 of Root for reserve in Grasses Species]
-                fc = 1; fr = 0; fs = 0;
-            else
-                fr= 1; fs=0;  fc = 0;
-            end
+if (aSE == 1 || aSE == 2 || aSE == 5) && ((PHE_S == 4) ||  (PHE_S == 1)) %% Decidous  dormant or senescente
+    if (aSE == 1 || aSE == 2 )
+        %%%%%%%%%% Constrain Reserve
+        if (B(4)< 0.67*B(2))  %%%  [2/3 of Sapwood for reserve Friend et al., 1997]
+            fc = 1;
+            fs = 0; fl = 0; fr = 0;  ff = 0;
         else
-            fr=0;  fs=1;  fc = 0;
+            fl = 0; ff = 0;
+            if aSE == 2
+                if (B(4)< 0.67*B(3)) %  [2/3 of Root for reserve in Grasses Species]
+                    fc = 1; fr = 0; fs = 0;
+                else
+                    fr= 1; fs=0;  fc = 0;
+                end
+            else
+                fr=0;  fs=1;  fc = 0;
+            end
+        end
+    elseif (aSE == 5) %%% Crop maturing and harvest phase
+        fr=0;  fs = 0;  fl = 0;  ff = ff_r;
+        if (B(4)< 0.67*B(5)) %  [2/3 of Grains for reserve in Crops]
+            fc = 1-ff; 
+        else
+            ff= 1; fc = 0;
         end
     end
     %%%
@@ -154,6 +163,9 @@ else
     if (B(4) >= 0.67*B(3)) && (aSE == 2)%%%  [2/3 of Root for reserve in Grasses)
         C = 1;
     end
+    if (B(4) >= 0.67*B(5)) && (aSE == 5)%%%  [2/3 of Reprodcution for reserve in Crops)
+        C = 1;
+    end
     %%%%%%%%%%%%%%%%%%%%%
     fc = (1-C)*(1-ff);
     %%%%%%%%%%%%%%%%%%%%%%%
@@ -165,7 +177,7 @@ end
 %%% Constrain Allocation
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 if B(1) >= LtR*B(3) %%% Leaf-Root ratio
-    if (aSE == 1) || (aSE == 0) || (aSE == 3) %% Woody Species
+    if (aSE == 1) || (aSE == 0) || (aSE == 3) || (aSE == 5) %% Woody Species
         if (fr + fs) == 0
             fls  = 0.5*fl;
         else
@@ -233,6 +245,8 @@ switch aSE
         end
         %%%%
         dla= dlaK*AgeL/((age_cr)^2); %% [1/d] Mortality for normal leaf age
+    case 5
+        dla= min(1/age_cr,AgeL/((age_cr)^2)); %% [1/d] Mortality as in grass
 end
 %%%%%%
 %%% Leaf Mortality to Cold Stress  Linear [Cox 2001]

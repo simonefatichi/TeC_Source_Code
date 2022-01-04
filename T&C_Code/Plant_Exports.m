@@ -2,7 +2,7 @@
 %   Subfunction  PLANT EXPORTS   %%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 function[TexC,TexN,TexP,TexK,TNIT,TPHO,TPOT,NuLIT,NreserveM,PreserveM,KreserveM,SupN,SupP,SupK,IS]= Plant_Exports(B,Btm1,...
-    NuLITtm1,Slf,Sfr,Swm,Sll,Sr,Rexmy,St,Mpar,fab,fbe,RB,Nreserve,Preserve,Kreserve,rNc,rPc,rKc,ManI)  
+    NuLITtm1,Slf,Sfr,Swm,Sll,Sr,Rexmy,St,Mpar,fab,fbe,RB,Nreserve,Preserve,Kreserve,rNc,rPc,rKc,ManI,OPT_SB)  
 %%%%%%%%%
 %%%%-> All computations are for /m2 PFT not ground 
 %%%% INPUT
@@ -179,27 +179,29 @@ frac_to_metabolic_r(frac_to_metabolic_r<0)=0;
 NreserveM=Nreserve + VarResN;
 PreserveM=Preserve + VarResP;
 KreserveM=Kreserve + VarResK;
-switch ManI
-    case 1  %%% Fire
-        AddN = AddN+ fire_eff*fab*NreserveM/dtd;
-        AddP = AddP+ fire_eff*fab*PreserveM/dtd;
-        AddK = AddK+ fire_eff*fab*KreserveM/dtd;
-        TexN = TexN  + AddN;
-        TexP = TexP  + AddP;
-        TexK = TexK  + AddK;
-        NreserveM=(1-fire_eff*fab)*NreserveM;
-        PreserveM=(1-fire_eff*fab)*PreserveM;
-        KreserveM=(1-fire_eff*fab)*KreserveM;
-    case -1 %%% Logging
-        AddN =  AddN+fract_log*NreserveM/dtd;
-        AddP =  AddP+fract_log*PreserveM/dtd;
-        AddK =  AddK+fract_log*KreserveM/dtd;
-        TexN = TexN  + AddN;
-        TexP = TexP  + AddP;
-        TexK = TexK  + AddK;
-        NreserveM=(1-fract_log)*NreserveM;
-        PreserveM=(1-fract_log)*PreserveM;
-        KreserveM=(1-fract_log)*KreserveM;
+if OPT_SB == 1 %%% Only with soil-biogeochemistry on - otherwise reserves are depleted
+    switch ManI
+        case 1  %%% Fire
+            AddN = AddN+ fire_eff*fab*NreserveM/dtd;
+            AddP = AddP+ fire_eff*fab*PreserveM/dtd;
+            AddK = AddK+ fire_eff*fab*KreserveM/dtd;
+            TexN = TexN  + AddN;
+            TexP = TexP  + AddP;
+            TexK = TexK  + AddK;
+            NreserveM=(1-fire_eff*fab)*NreserveM;
+            PreserveM=(1-fire_eff*fab)*PreserveM;
+            KreserveM=(1-fire_eff*fab)*KreserveM;
+        case -1 %%% Logging
+            AddN =  AddN+fract_log*NreserveM/dtd;
+            AddP =  AddP+fract_log*PreserveM/dtd;
+            AddK =  AddK+fract_log*KreserveM/dtd;
+            TexN = TexN  + AddN;
+            TexP = TexP  + AddP;
+            TexK = TexK  + AddK;
+            NreserveM=(1-fract_log)*NreserveM;
+            PreserveM=(1-fract_log)*PreserveM;
+            KreserveM=(1-fract_log)*KreserveM;
+    end
 end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

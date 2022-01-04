@@ -6,7 +6,7 @@
 %%%% Enquist-Niklas 2002 Science  Niklas-Enquist 2002 Am. Naturalist 
 %%%% ALLOCATION %%% Friedlingstein et al 1998
 %%% Krinner et al 2015 
-function[fs1,fr1,fl1,N]= Allocation_Coefficients(TBio,LAI,Bfac,Se,Ts,FNC,aSE,age_cr,dflo,OPT_VCA)
+function[fs1,fr1,fl1]= Allocation_Coefficients(TBio,LAI,Bfac,Se,Ts,FNC,aSE,age_cr,dflo,soCrop,OPT_VCA)
 %%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%% Compute the preliminary allocation coefficients 
 %%% fr allocation to root
@@ -27,6 +27,9 @@ if aSE ~= 2 && OPT_VCA >= 1
     so = min(0.3,0.01775*Tot_Biomass.^0.6937); %%% Recomputed by me 
     %so= min(0.3,0.3*Tot_Biomass./12.2);
 end
+if (aSE == 5) 
+    so=soCrop; 
+end 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 ke=0.15; %% Light extinction 
@@ -58,7 +61,7 @@ if (aSE == 3)  %%% Tropical Forest
     fs1=tmp;
 end 
 %%%%%%%%%%%%%%%%%%%%%%%%
-if (aSE == 2) %%% Grass Species
+if (aSE == 2) 
     fsl1 = fs1*(fl1/(fl1+fr1));
     fl1 = fl1 + fsl1;
     fr1 = fr1 + (fs1-fsl1);

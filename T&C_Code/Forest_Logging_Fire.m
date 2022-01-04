@@ -18,7 +18,7 @@ ManI=0; %%% Management Indicator (0) Nothing (1) Fire (-1) Logging
 Btm1=B;
 if fract_log > 0
     %%%%%%%%%% Logging
-    if  sum(abs(DD-Date_log)<=0.99)>=1 
+    if  sum(abs(DD-Date_log)<=0.49)>=1 
         ManI=-1;
         %%%%% Completely harvested pools
         B = B - fract_log*B; %% [gC/ m^2 ]
@@ -50,7 +50,7 @@ if fract_log > 0
 end
 %%%% Fire -->
 if fire_eff > 0
-    if  sum(abs(DD-Date_fire)<=0.99)>=1 
+    if  sum(abs(DD-Date_fire)<=0.49)>=1 
         ManI=1;
         %%%%% Completely harvested pools
         B = B - fire_eff*B; %% [gC/ m^2 ]
