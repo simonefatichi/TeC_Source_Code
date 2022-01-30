@@ -105,7 +105,7 @@ switch PHE_Stm1
         end
     case 4
         dflo = dflotm1 + 1;
-        if LAI <= LAI_min || (aSE == 0) || (aSE == 2) || (aSE == 3) || (aSE == 5)
+        if LAI <= LAI_min || (aSE == 0) || (aSE == 2) || (aSE == 3) 
             PHE_S = 1;
         else
             PHE_S = 4;
