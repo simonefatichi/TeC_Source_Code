@@ -51,7 +51,7 @@ end
 %%%% Fire -->
 if fire_eff > 0
     if  sum(abs(DD-Date_fire)<=0.49)>=1 
-        ManI=1;
+        ManI=-5;
         %%%%% Completely harvested pools
         B = B - fire_eff*B; %% [gC/ m^2 ]
         %%%%

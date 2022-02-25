@@ -1,8 +1,8 @@
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %   Subfunction Crop Height and type     %
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-function [hc,SAI,B,Ccrown,ZR95,Nreserve,Preserve,Kreserve,TdpI,Bfac_weekI,Rf] = CropHeightType(LAI,LAIdead,cc,ZR95,B,Zs,CASE_ROOT,Ccrown,...
-    Nreserve,Preserve,Kreserve,TdpI,Bfac_weekI,ManI,Mpar,Veg_Param_Dyn)
+function [hc,SAI,B,Ccrown,ZR95,Nreserve,Preserve,Kreserve,AgrHarNut,Rf] = CropHeightType(LAI,LAIdead,cc,ZR95,B,Zs,CASE_ROOT,Ccrown,...
+    Nreserve,Preserve,Kreserve,ManI,Mpar,Veg_Param_Dyn,OPT_SoilBiogeochemistry)
 %%%% 
 BRoot=B(:,cc,3); 
 %Crop_type=Mpar.Crop_type; 
@@ -20,20 +20,21 @@ end
 hc(hc<0.05)=0.05; 
 SAI=max(0.15*LAI,0.001); 
 %%%%%%%%%%%%%%%%%
-if  ManI(cc)>0 
-    ccrop=find(Ccrown~=0); fcrop=Mpar(cc).Crop_type(ManI(cc));
-    Ccrown=Ccrown*0; ZR95=ZR95*0;
-    Ccrown(fcrop)=Mpar(cc).Crop_crown(fcrop);
-    ZR95(fcrop)= Mpar(cc).Crop_root(fcrop);
-    if fcrop ~= ccrop
-        B(:,fcrop,:)=B(:,ccrop,:);  B(:,ccrop,:)=zeros(1,8);
-        Nreserve(:,fcrop)=Nreserve(:,ccrop); Nreserve(:,ccrop)=0; 
-        Preserve(:,fcrop)=Preserve(:,ccrop); Preserve(:,ccrop)=0; 
-        Kreserve(:,fcrop)=Kreserve(:,ccrop); Kreserve(:,ccrop)=0; 
-        TdpI(:,fcrop)=TdpI(:,ccrop); 
-        Bfac_weekI(:,fcrop)=Bfac_weekI(:,ccrop); 
+AgrHarNut=[0 0 0]; 
+if  ManI(cc)>0 %% Sowing
+    Ccrown(cc)=Mpar(cc).Crop_crown(ManI(cc));
+    if Ccrown(cc)==0
+        B(:,cc,:)=zeros(1,8);
     end
-    cc=fcrop; BRoot=B(:,cc,3);
+elseif ManI(cc) == -2 %%%%% Harvest
+    if OPT_SoilBiogeochemistry==1
+        AgrHarNut=[Nreserve(1,cc) Preserve(1,cc) Kreserve(1,cc)];
+        Nreserve(1,cc)=0;
+        Preserve(1,cc)=0;
+        Kreserve(1,cc)=0;
+    end
+    %%% Removing the crop 
+    Ccrown(cc)=0;
 end
 %%%%%%%%%%%
 %%%%% Potential update for rooting depth -- 

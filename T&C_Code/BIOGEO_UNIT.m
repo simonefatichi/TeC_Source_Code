@@ -97,6 +97,13 @@ Kuptake_H=K_Uptake_H.*(1-SupK_H)./Ccrown;
 Nuptake_L=(NH4_Uptake_L+NO3_Uptake_L).*(1-SupN_L)./Ccrown;
 Puptake_L=P_Uptake_L.*(1-SupP_L)./Ccrown;
 Kuptake_L=K_Uptake_L.*(1-SupK_L)./Ccrown;
+%%%%
+Nuptake_H(Ccrown == 0) = 0;
+Nuptake_L(Ccrown == 0) = 0;
+Puptake_H(Ccrown == 0) = 0;
+Puptake_L(Ccrown == 0) = 0;
+Kuptake_H(Ccrown == 0) = 0;
+Kuptake_L(Ccrown == 0) = 0;
 %%%%% Updating Mineral Nutrient in the soil mean of last 365 days 
 n4=365; 
 NavlI(1) = NavlI(1)*(n4-1)/n4  + (P(31)+P(32))/n4; 

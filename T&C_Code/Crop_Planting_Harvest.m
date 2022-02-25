@@ -32,7 +32,8 @@ if  sum(abs(DD-Date_harvesting)<=0.49)>=1
     LAI=0; LAIdead=0;
 end
 %%%%%%%%%%%
-if ManI~=0
+%if ManI~=0
+if (sum(find(abs(DD-Date_sowing)<=0.49))>0) ||  (ManI == -2) %% planting or harvest 
     RB(1)=(Btm1(1)-B(1))/dtd; %%  [gC/ m^2 day] %%% Leaves - Grass
     RB(2)=(Btm1(2)-B(2))/dtd; %%  [gC/ m^2 day] %%% Sapwood
     RB(3)=(Btm1(3)-B(3))/dtd; %%  [gC/ m^2 day] %%% Fine roots

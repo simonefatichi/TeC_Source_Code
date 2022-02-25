@@ -95,6 +95,13 @@ Nsto_tm1 = FiS*Btm1(4)*(1/Nl-1/Nc); %% Flexible storage Nitrogen Plant [gN/m^2]
 Psto_tm1 = FiS*Btm1(4)*(1/Phol-1/Phoc); %%
 Ksto_tm1 = FiS*Btm1(4)*(1/Kpotl-1/Kpotc); %%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+RB(RB<0) = 0; %% In case of sowing 
+if sum(Btm1)==0
+    Nsto_tm1 =1; Psto_tm1 =1; Ksto_tm1 =1; 
+end 
+if sum(B)==0
+    Nsto =1; Psto =1; Ksto =1; 
+end 
 %%%% Real plant nutrient content 
 %TNREAL = TNIT + Nreserve; 
 %TPREAL = TPHO + Preserve; 
@@ -128,6 +135,7 @@ NuLIT = [LNIT LPHO LPOT];
 SupN = ((Nreserve - 0.8*Nsto)./(0.6*TNITns+0.2*Nsto)); SupN(SupN>1)=1; SupN(SupN<0)=0;
 SupP=  ((Preserve - 0.8*Psto)./(0.6*TPHOns+0.2*Psto)); SupP(SupP>1)=1; SupP(SupP<0)=0;
 SupK = ((Kreserve - 0.8*Ksto)./(0.6*TPOTns+0.2*Ksto)); SupK(SupK>1)=1; SupK(SupK<0)=0;
+%%%%
 %%%%
 TNIT = TNIT + LNIT; 
 TPHO = TPHO + LPHO;
@@ -315,6 +323,7 @@ IS=[IS_C_met_sur_lit;IS_C_str_sur_lit_lig;IS_C_str_sur_lit_nlig;
     IS_P_sur_lit;IS_P_wod_lit;IS_P_ssr_lit;
     IS_K_sur_lit;IS_K_wod_lit;IS_K_ssr_lit];
 %%%%%%
+%%%%%%%%
 if isreal(sum(IS))==0 || isnan(sum(IS)) == 1
     disp('NaN in Litter export')
     return

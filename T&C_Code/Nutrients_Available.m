@@ -69,11 +69,14 @@ else
         rKc = 1;
     end
 end
-if OPT_SoilBiogeochemistry == 1
-if rNc < 0.64 || rPc <0.64 || rKc <0.64 %% || rNc > 1.85 || rPc > 1.85 || rKc > 1.85 
-    disp('Error Nutrient Concentrations outside allowed bounds!!') 
-    return 
+if sum(B) == 0
+    rNc=1; rPc=1; rKc=1; 
 end 
+if OPT_SoilBiogeochemistry == 1 
+    if rNc < 0.64 || rPc <0.64 || rKc <0.64 %% || rNc > 1.85 || rPc > 1.85 || rKc > 1.85
+        disp('Error Nutrient Concentrations outside allowed bounds!!')
+        return
+    end
 end 
 rMc = min([rNc,rPc,rKc]); %% Overall nutrient limitation used by exudation; 
 %%%%%%%%%%%%%%%%%%%%%%%%% Minimum Nutriennt concentration is 0.65 of Non-struct nutrients 
@@ -94,7 +97,7 @@ if e_relN > 100 && OPT_SoilBiogeochemistry == 1
     return 
 end 
 %%%%%%%%%%%%%%%%%%%%%%%%
-if OPT_SoilBiogeochemistry == 0
+if OPT_SoilBiogeochemistry == 0 
     e_relN=1;  FNC = 1; rNcR = 1; 
     rNc=1; rPc=1; rKc=1; rMc = 1; 
 end 

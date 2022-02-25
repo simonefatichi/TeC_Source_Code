@@ -183,6 +183,7 @@ LEAK_DOP = zeros(NNd,1);
 RexmyI=zeros(NNd,3);
 
 %%%%%%%%%%%%%%%%%
+AgrHarNut =  zeros(NNd,3);
 jDay=zeros(NNd,1);L_day=zeros(NNd,1);
 
 Ccrown_t =ones(NNd,cc);
@@ -271,7 +272,7 @@ for i=2:NN
         if OPT_SoilBiogeochemistry == 1
             IS= Ccrown*squeeze(ISOIL_L(j-1,:,:)) + Ccrown*squeeze(ISOIL_H(j-1,:,:));
             REXMY= Ccrown*squeeze(Rexmy_L(j-1,:,:)) + Ccrown*squeeze(Rexmy_H(j-1,:,:));
-            FireA = max(max(ManIH),max(ManIL));
+            FireA = 1*((sum(ManIH==-5) + sum(ManIL==-5)) > 0); 
             [P(j,:),LEAK_NH4(j),LEAK_NO3(j),LEAK_P(j),LEAK_K(j),LEAK_DOC(j),LEAK_DON(j),LEAK_DOP(j),...
                 Nuptake_H(j,:),Puptake_H(j,:),Kuptake_H(j,:),Nuptake_L(j,:),Puptake_L(j,:),Kuptake_L(j,:),RexmyI(j,:),...
                 R_litter(j),R_microbe(j),R_litter_sur(j),R_ew(j),VOL(j),N2flx(j),Min_N(j),Min_P(j),...
@@ -332,8 +333,8 @@ for i=2:NN
                 if aSE_H(cc) == 2
                     [hc_H(j,cc)] = GrassHeight(LAI_H(j,cc),LAIdead_H(j,cc));
                 elseif aSE_H(cc) == 5
-                    [hc_H(j,cc),SAI_H(j,cc),B_H(j,:,:),Ccrown,ZR95_H,Nreserve_H(j-1:j,:),Preserve_H(j-1:j,:),Kreserve_H(j-1:j,:),TdpI_H(j-1:j,:),Bfac_weekH(j-1:j,:),RfH_Zs] = CropHeightType(LAI_H(j,cc),LAIdead_H(j,cc),cc,ZR95_H,B_H(j,:,:),...
-                        Zs,CASE_ROOT,Ccrown,Nreserve_H(j-1:j,:),Preserve_H(j-1:j,:),Kreserve_H(j-1:j,:),TdpI_H(j-1:j,:),Bfac_weekH(j-1:j,:),ManIH,Mpar_H,VegH_Param_Dyn);
+                    [hc_H(j,cc),SAI_H(j,cc),B_H(j,:,:),Ccrown,ZR95_H,Nreserve_H(j-1:j,:),Preserve_H(j-1:j,:),Kreserve_H(j-1:j,:),AgrHarNut(j,:),RfH_Zs] = CropHeightType(LAI_H(j,cc),LAIdead_H(j,cc),cc,ZR95_H,B_H(j,:,:),...
+                        Zs,CASE_ROOT,Ccrown,Nreserve_H(j,:),Preserve_H(j,:),Kreserve_H(j,:),ManIH,Mpar_H,VegH_Param_Dyn,OPT_SoilBiogeochemistry);
                     %%%%
                 else
                     hc_H(j,cc)= hc_H(j-1,cc); %%%[m]
@@ -385,8 +386,8 @@ for i=2:NN
                 if aSE_L(cc) == 2
                     [hc_L(j,cc)] = GrassHeight(LAI_L(j,cc),LAIdead_L(j,cc));
                 elseif aSE_L(cc) == 5
-                    [hc_L(j,cc),SAI_L(j,cc),B_L(j,:,:),Ccrown,ZR95_L,Nreserve_L(j-1:j,:),Preserve_L(j-1:j,:),Kreserve_L(j-1:j,:),TdpI_L(j-1:j,:),Bfac_weekL(j-1:j,:),RfL_Zs] = CropHeightType(LAI_L(j,cc),LAIdead_L(j,cc),cc,ZR95_L,B_L(j,:,:),...
-                        Zs,CASE_ROOT,Ccrown,Nreserve_L(j-1:j,:),Preserve_L(j-1:j,:),Kreserve_L(j-1:j,:),TdpI_L(j-1:j,:),Bfac_weekL(j-1:j,:),ManIL,Mpar_L,VegL_Param_Dyn);
+                    [hc_L(j,cc),SAI_L(j,cc),B_L(j,:,:),Ccrown,ZR95_L,Nreserve_L(j,:),Preserve_L(j,:),Kreserve_L(j,:),AgrHarNut(j,:),RfL_Zs] = CropHeightType(LAI_L(j,cc),LAIdead_L(j,cc),cc,ZR95_L,B_L(j,:,:),...
+                        Zs,CASE_ROOT,Ccrown,Nreserve_L(j,:),Preserve_L(j,:),Kreserve_L(j,:),ManIL,Mpar_L,VegL_Param_Dyn,OPT_SoilBiogeochemistry);
                 else
                     hc_L(j,cc)= hc_L(j-1,cc); %%%[m]
                     if OPT_VCA == 1
@@ -419,6 +420,11 @@ for i=2:NN
         end
         %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
         %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+        if OPT_VCA == 0  %%% Solutions for Crops aSE==5 
+            Ccrown_t(j,:) = Ccrown;
+            Cbare = 1 - sum(Ccrown) - Cwat - Curb - Crock;
+            Check_Land_Cover_Fractions(Crock,Curb,Cwat,Cbare,Ccrown);
+        end
     end
     %%%%%%% %%%%%%%
     if OPT_VCA == 1
@@ -550,9 +556,13 @@ for kj=1:cc
     CkC_H(kj) =  sum(dB_H)+ sum(1.0368*An_H(:,kj)/24)- sum(Rmr_H(:,kj)) -sum(Rmc_H(:,kj)) -sum(Rms_H(:,kj)) -sum(Rg_H(:,kj))...
         -sum(TexC_H(:,kj));
     %- sum(Swm_H(:,kj))-sum(Sfr_H(:,kj))-sum(Sr_H(:,kj))-sum(Slf_H(:,kj)) - sum(Rexmy_H(:,kj,:));%
+    % CkC_H(kj) =  sum(dB_H)+ sum(1.0368*An_H(:,kj)/24)- sum(Rmr_H(:,kj)) -sum(Rmc_H(:,kj)) -sum(Rms_H(:,kj)) -sum(Rg_H(:,kj))...
+    %     -sum(RB_H(:,kj,:),[1,3])- sum(Swm_H(:,kj))-sum(Sfr_H(:,kj))-sum(Sr_H(:,kj))-sum(Slf_H(:,kj))-sum(Rexmy_H(:,kj,:),[1,3]);
     CkC_L(kj) =  sum(dB_L)+ sum(1.0368*An_L(:,kj)/24)- sum(Rmr_L(:,kj)) -sum(Rmc_L(:,kj)) -sum(Rms_L(:,kj)) -sum(Rg_L(:,kj))...
         -sum(TexC_L(:,kj));
     %- sum(Swm_L(:,kj))-sum(Sfr_L(:,kj))-sum(Sr_L(:,kj))-sum(Slf_L(:,kj)) - sum(Rexmy_L(:,kj,:));%
+    %    CkC_L(kj) =  sum(dB_L)+ sum(1.0368*An_L(:,kj)/24)- sum(Rmr_L(:,kj)) -sum(Rmc_L(:,kj)) -sum(Rms_L(:,kj)) -sum(Rg_L(:,kj))...
+    %    -sum(RB_L(:,kj,:),[1,3])- sum(Swm_L(:,kj))-sum(Sfr_L(:,kj))-sum(Sr_L(:,kj))-sum(Slf_L(:,kj))-sum(Rexmy_L(:,kj,:),[1,3]);
 end
 CkC_ALL = sum(CkC_H)+sum(CkC_L);
 
@@ -581,8 +591,13 @@ end
 %%%% Difference between carbon and nutrient ISOIL and Tex (0 except for
 %%%% management cases)
 %%% To add LitFirEmi to the litter budget
-IS=  Ccrown*squeeze(sum(ISOIL_L,1))+ Ccrown*squeeze(sum(ISOIL_H,1));
-Tex = squeeze(sum(TexC_L,1))*Ccrown' + squeeze(sum(TexC_H,1))*Ccrown';
+IS = zeros(18, 1);
+Tex = 0;
+for jj = 1:length(Ccrown_t)
+    IS = IS + squeeze(ISOIL_L(jj, :, :))'*Ccrown_t(jj, :)' + squeeze(ISOIL_H(jj, :, :))'*Ccrown_t(jj, :)';
+    Tex = Tex + TexC_L(jj,:)*Ccrown_t(jj, :)' + TexC_H(jj,:)*Ccrown_t(jj, :)';
+end
+
 CkExC = Tex - sum(IS(1:9));
 
 clear dB_H  dB_L dNres_H  dNres_L  dPres_H dKres_H  dPres_L dKres_L ed

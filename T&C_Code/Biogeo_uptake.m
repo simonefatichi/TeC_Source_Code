@@ -106,6 +106,14 @@ NH4_Uptake= max(NH4_Uptake_a,NH4_Uptake_p);
 NO3_Uptake=max(NO3_Uptake_a,NO3_Uptake_p);
 P_Uptake=max(P_Uptake_a,P_Uptake_p);
 K_Uptake=max(K_Uptake_a,K_Uptake_p);
+%%%%%
+if Broot == 0
+    NH4_Uptake = 0;
+    NO3_Uptake =0;
+    P_Uptake = 0;
+    K_Uptake = 0;
+end
+%%%%
 return
 
 
