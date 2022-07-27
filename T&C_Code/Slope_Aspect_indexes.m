@@ -25,6 +25,9 @@ if strcmp(ANSW,'mste')
                 Z= (DTMf(i-1:i+1,j-1:j+1)-DTMf(i,j))./d;
                 %s=nanmin(nanmin(Z)); %%% maximum slope
                 s=min(min(Z(not(isnan(Z))))); %% 
+                if isempty(s)
+                    s=NaN;
+                end 
                 SLO(i,j)=-s;
             end
         end
