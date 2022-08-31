@@ -105,6 +105,9 @@ switch OPT_ALLOME
         if AgeE>1.5
             Hc= 1./(0.012807792+(6.1243119*log(AgeE)./AgeE.^2));  %% [m]
             %TBio = 2./(0.0030239638+(2.4875134*log(AgeE)./AgeE.^2)); %% Aboveground Biomass - DM [ton DM/ha]
+            %BaboveD= 2*Babove/100; %% [ton DM/ha]
+            %x=(2-BaboveD*0.0030239638)./(2.4875134*BaboveD);
+            %Hc= 1./(0.012807792+(6.1243119*x));  %% [m]
         else
             Hc=0.3+0.6/1.5*AgeE;
             %TBio=  4.4/1.5*AgeE;

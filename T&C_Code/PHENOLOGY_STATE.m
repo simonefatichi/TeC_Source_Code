@@ -61,7 +61,7 @@ switch PHE_Stm1
                 end
             end
         else
-            if (Tsmm >= Tlo) && (Bfac_week >= Bfac_lo) && (jDay >= -mjDay) && (L_day >= LDay_min ) && (PAR_Im>PAR_th) %% Criteria Leaf onset
+            if (Tsmm >= Tlo) && (Bfac_week >= Bfac_lo) && (L_day >= LDay_min ) && (PAR_Im>PAR_th) && ((jDay >= -mjDay) || ((jDay < 45) && (mjDay<-45)))  %% Criteria Leaf onset
                 PHE_S = 2;
                 dflo = 1;
             else
