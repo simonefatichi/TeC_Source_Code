@@ -85,8 +85,10 @@ end
 if length(Zs_deb)>2
     Cdeb = 1;
     if Cice ~= 1
-        disp('Error Debris without Ice')
-        return
+        %disp('Error Debris without Ice')
+        %%% Removing the debris as the ice is completely melted
+        Zs_deb=[];
+        Cdeb=0;
     end
 else
     Cdeb = 0;
@@ -207,6 +209,7 @@ if Csno == 1
     %%%%%%%
     if Cice == 1
         if Cdeb == 1
+            % specific heat capacity ice = 2093 J / kg K
             Gsno = lan_sno*(Tstm1-Tdebtm1(1))/(SNDtm1+0.001); %%% [W m-2]
             Gsno_max =2093*(SWEtm1+In_SWEtm1)*(Tstm1-Tdebtm1(1))/dt; %%  Maximum Flux [W /m^2 ]
             Gsno= sign(Gsno)*min([abs(Gsno),abs(Gsno_max)]);
@@ -215,12 +218,15 @@ if Csno == 1
             ms_deb = length(Tdebtm1);
             lan_deb =  Deb_Par.lan*ones(1,ms_deb) ;%%% [W/m K ] Thermal conductivity debris
             cv_deb =  Deb_Par.cs*Deb_Par.rho*ones(1,ms_deb); % [J/m^3 K]  Volumetric heat capcity debris
-            
+
             [G,Tdeb,Gn]=Soil_Heat_Profile_Normal(NaN,dt,Tdebtm1,ms_deb,Zs_deb,lan_deb,cv_deb,Ticetm1,Gsno,NaN,4);
+            %%%%
+            Gice_max =2093*(ICEtm1)*(Tdeb(ms_deb)-Ticetm1(1))/dt; %%  Maximum Flux [W /m^2 ]
+            Gn= sign(Gn)*min([abs(Gn),abs(Gice_max)]);
         else
             Gsno = lan_sno*(Tstm1-Ticetm1(1))/(SNDtm1+0.001); %%% [W m-2]
             Gsno_max =2093*(SWEtm1+In_SWEtm1)*(Tstm1-Ticetm1(1))/dt; %%  Maximum Flux [W /m^2 ]
-            Gice_max =2093*(ICEtm1)*(Tstm1-Ticetm1(1))/dt; %%  Maximum Flux [W /m^2 ] 
+            Gice_max =2093*(ICEtm1)*(Tstm1-Ticetm1(1))/dt; %%  Maximum Flux [W /m^2 ]
             Gsno= sign(Gsno)*min([abs(Gsno),abs(Gsno_max),abs(Gice_max)]);
             %%% Snow over ice
             G = Gsno ;
@@ -242,7 +248,7 @@ if Csno == 1
                 O=Otm1 ; Oice=Oicetm1;
                 Tdp=Tdamp*ones(1,ms);
             end
-            
+
         else
             %%%%% Snow cover over soil
             if OPT_SoilTemp==1
@@ -294,7 +300,7 @@ if Csno == 1
         Tdew,t_slstm1,SWEtm1,SNDtm1,rostm1,SP_wctm1,In_SWEtm1,fpr,Vavail,Vavail_plant_H,Vavail_plant_L,WATtm1,ICEtm1,OPT_VegSnow,TsV);
     %%%%
     %%%%%%%%%%%%%%%%%%%
-    
+
 else
     %%%% Ice without the snow
     if Cice > 0
@@ -342,7 +348,7 @@ else
                     [~,~,~,Oice,O]=Soil_Thermal_properties_FT(Tdp,Pre,rsd,lan_dry,lan_s,cv_s,SPAR,L,Pe,O33,alpVG,nVG,...
                         Phy,s_SVG,bVG,Osat,Ohy,(Otm1+Oicetm1),OPT_FR_SOIL);
                 end
-                
+
             end
             Gfin=G;
             %%%% underneath surface cannot cool the ice
@@ -392,8 +398,8 @@ if abs(Ts) >= 120
     return
 end
 if abs(Ts) <= eps
-    %%%% To prevent numerical instabilities 
-    Ts=0.0; 
+    %%%% To prevent numerical instabilities
+    Ts=0.0;
 end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%% POST COMPUTATION %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -484,7 +490,7 @@ if Csno == 1
         Ta,Ts,Tstm1,Tdew,Ws,t_slstm1,SWEtm1,SNDtm1,rostm1,SP_wctm1,In_SWEtm1,In_max_SWE,dw_SNO,...
         Pr_liq,Pr_sno,ESN,ESN_In,Rn,H,QE,G,Qv,Csnow,Ccrown,Cwat,Cfol_H,fpr,Pr_sno_day,Th_Pr_sno,ros_max1,ros_max2);
     %%%%%%
-    %%% Gres - additional heat left after the complete snow melting - currently lost 
+    %%% Gres - additional heat left after the complete snow melting - currently lost
     %%%%%
     if (dw_SNO <= 0.5) && (OPT_VegSnow==1) && (sum(hc_H)>0)
         [raV]=Aerodynamic_Resistence(Ta,TsV,Pre,zatm,disp_h,zom,zoh,Ws,ea);
@@ -513,24 +519,24 @@ if Csno == 1
     if Cice == 1
         %%%
         if Cdeb == 1
-            
+
             %%% Presence of debris cover == to rock for hydrology
             [In_deb,SE_deb]=Interceptions_Debris(dt,Csno,Cdeb,...
                 In_urbtm1,In_max_urb,Pr_liq,WR_SP,EIn_urb);
-            
-            
+
+
             %%%% Icepacks
             [Tice,ICE,ICE_D,IP_wc,WR_IP,dQI,QfmI,Imelt]=Icepack(dt,NaN,Ticetm1,ICEtm1,IP_wctm1,...
                 0,0,0,0,0,-Gn,0,Cwat,Ccrown,Cfol_H,Csno,Cicew,Ice_wc_sp,SE_deb);
             SE_deb = 0;
-            
+
         else
             %%%% Icepacks
             [Tice,ICE,ICE_D,IP_wc,WR_IP,dQI,QfmI,Imelt]=Icepack(dt,NaN,Ticetm1,ICEtm1,IP_wctm1,...
                 0,0,0,0,0,-G,0,Cwat,Ccrown,Cfol_H,Csno,Cicew,Ice_wc_sp,WR_SP);
             Tdeb=0;
         end
-        
+
         if Crock ==1 || Curb ==1  || Cwat ==1
             [~,Tdp]=Soil_Heat_Profile_Normal(Tice,dt,Tdptm1,ms,Zs,lan_oth,cv_oth,NaN,NaN,0,3);
             O=Otm1 ; Oice=Oicetm1;
@@ -559,17 +565,21 @@ else
             [G,Tdeb,Gn]=Soil_Heat_Profile_Normal(Ts,dt,Tdebtm1,ms_deb,Zs_deb,lan_deb,cv_deb,Ticetm1,NaN,NaN,2);
             %%% Heat Flux into the debris G
             %%% Heat Flux from the debris  Gn
+
+            Gice_max =2093*(ICEtm1)*(Tdeb(ms_deb)-Ticetm1(1))/dt + 333700*(ICEtm1)/dt*(Tdeb(ms_deb)>Ticetm1(1)) ; %%  Maximum Flux [W /m^2 ]
+            Gn= sign(Gn)*min([abs(Gn),abs(Gice_max)]);
+
             TsF = Tdeb(1) + G*(0.001*Zs_deb(2)*0.5)/lan_deb(1);%% [C]
-            
+
             %%% Presence of debris cover == to rock for hydrology
             [In_deb,SE_deb]=Interceptions_Debris(dt,Csno,Cdeb,...
                 In_urbtm1,In_max_urb,Pr_liq,0,EIn_urb);
-            
+
             %%%% Icepacks
             [Tice,ICE,ICE_D,IP_wc,WR_IP,dQ,Qfm,Imelt]=Icepack(dt,NaN,Ticetm1,ICEtm1,IP_wctm1,...
                 0,0,0,0,0,-Gn,0,Cwat,Ccrown,Cfol_H,Csno,Cicew,Ice_wc_sp,SE_deb);
             SE_deb = 0;
-            
+
             %%%%%%%%%  Flux from ice to below
             if Crock ==1 || Curb ==1  || Cwat ==1
                 [~,Tdp]=Soil_Heat_Profile_Normal(Tice,dt,Tdptm1,ms,Zs,lan_oth,cv_oth,NaN,NaN,0,3);
