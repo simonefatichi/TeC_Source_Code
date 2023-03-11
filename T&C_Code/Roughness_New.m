@@ -71,7 +71,7 @@ end
 %%%%%%
 if ydepth > 0
     zom_wat = 0.0002;
-    if ydepth > zom_other
+    if (ydepth > zom_other) && (ydepth > D) 
         zom_other = zom_wat;
     end
     zom_L = (zom_L.*(max(0,1-ydepth./hc_L)) + zom_wat*min(1,ydepth./hc_L)).*(hc_L>0); %% [m] roughness 

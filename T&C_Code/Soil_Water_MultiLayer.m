@@ -203,8 +203,10 @@ for jk=1:n
 end
 Psi_s=-(Psi_s/1000)*1000*9.81/1e+6; %%[MPa]
 %%%%%%%%%%
-Psi_minH = nanmin(PsiX50_H,PsiL50_H); 
-Psi_minL = nanmin(PsiX50_L,PsiL50_L); 
+%Psi_minH = nanmin(PsiX50_H,PsiL50_H); 
+%Psi_minL = nanmin(PsiX50_L,PsiL50_L); 
+Psi_minH = min([PsiX50_H;PsiL50_H],[],'omitnan'); 
+Psi_minL = min([PsiX50_L;PsiL50_L],[],'omitnan');  
 Exwat_L = gsr_L/rho2*1000*3600.*(-Psi_minL'*ones(1,n) + ones(cc,1)*(Psi_s')); %%  %% [mm m2 / m2 ground h ] %% Max extractable water 
 Exwat_H = gsr_H/rho2*1000*3600.*(-Psi_minH'*ones(1,n) + ones(cc,1)*(Psi_s')); %%  %% [mm m2 / m2 ground h ] %% Max extractable water 
 Exwat_L(Exwat_L<0)=0;
