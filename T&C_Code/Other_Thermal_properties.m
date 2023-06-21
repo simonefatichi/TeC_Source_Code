@@ -22,7 +22,7 @@ end
 if Curb == 1
     lan = 0.92; %%% [W/m K ] Thermal conductivity
     rho = 2200; 
-    cs =  920;
+    cs =  700;
     cv =  rho*cs;  % [J/m^3 K] Volumetric heat capcity
     CT=2*(sqrt(pi/(lan*cs*rho*tau))); %%  [K m^2/J] Total Thermal Capacity
 end

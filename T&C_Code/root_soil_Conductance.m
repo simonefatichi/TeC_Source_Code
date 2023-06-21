@@ -1,17 +1,23 @@
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %   Subfunction  Root to Soil Conductivity                 %%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-function[Ksr]= root_soil_Conductance(Ks,Rl,rcyl,rroot,Zr)
+function[Ksr]= root_soil_Conductance(Ks,Rl,rroot,dz)
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%Rl = 5300 ; %%% root length index [m root / m^2 ground]
+%Rl = 5300 ; %%% root length index [m root / m^2 ground] on the layer 
+dz = dz/1000 ; %% [m] layer depth %%% 
+Zr= dz ; %% [m] root depth 
+Rld=Rl/Zr; %%% root length density  [m root / m^3 ground] on the layer 
+rcyl=sqrt(1/(pi*Rld)); %% [m] Bonan 2019 book 
+%rcyl= 2.0*1e-3 ;%%%  [m] radius cylinder of soil to which root has access to
 %rcyl = 4.25*1e-3 ;%%%  [m] radius cylinder of soil to which root has access to
 %rroot = 1*1e-3 ;%% [0.5-6 *10^-3] [m] root radius
-Zr = Zr/1000 ; %% [m] Rooting depth
 row= 1000; %% [kg/m^3] water density
 g= 9.81; %% [m/s^2] gravity acceleration
 rho= 55555; %% [mmolH20 / kg] Water density
 %%%
 CF = 10^6/(row*g); %% [m/MPa]
+%%%%%%%%%%%%%%%%%%%%
+
 %%%%%%%%%%%%
 %%%% Limit Hydraulic Conductivtiy to a minimum Value 
 %Ks(Ks< 1e-06) = 1e-06; %% [mm/h] 
@@ -42,7 +48,8 @@ switch OPT
         %%%%%%%%%%%% Holtta et al 2009  Sperry et al., 1998
         %gsr = Ks*Rl*(2*pi)/(log(rcyl/rroot)); %%[1/s]
         %%%%%%%%%%%%%%% %%%%%%%%%%
-        %%%%%%%%%%  (Deckyman et al 2008; Newman 1969 -- ANAFORE model
+        %%%%%%%%%%  (Deckyman et al 2008; Newman 1969 -- ANAFORE model -
+        %%%%%%%%%%  Bonan book 2019 
         gsr =  Ks*Rl*(2*pi)/(log(rcyl/rroot)); %%[1/s]
         %%%%%%%%%%%%%%%%%%%%%%%%%
         Ksr = gsr*CF*row*rho ; % [mmol H20 / m^2 ground s MPa]

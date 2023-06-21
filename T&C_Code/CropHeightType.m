@@ -1,7 +1,7 @@
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %   Subfunction Crop Height and type     %
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-function [hc,SAI,B,Ccrown,ZR95,Nreserve,Preserve,Kreserve,AgrHarNut,Rf] = CropHeightType(LAI,LAIdead,cc,ZR95,B,Zs,CASE_ROOT,Ccrown,...
+function [hc,SAI,B,Ccrown,Nreserve,Preserve,Kreserve,AgrHarNut] = CropHeightType(LAI,LAIdead,cc,B,Ccrown,...
     Nreserve,Preserve,Kreserve,ManI,Mpar,Veg_Param_Dyn,OPT_SoilBiogeochemistry)
 %%%% 
 BRoot=B(:,cc,3); 
@@ -37,19 +37,20 @@ elseif ManI(cc) == -2 %%%%% Harvest
     Ccrown(cc)=0;
 end
 %%%%%%%%%%%
+%%%% All these part as been outsourced to the Root_Depth_Dynamics Function
 %%%%% Potential update for rooting depth -- 
-if  CASE_ROOT~= 1 
-    disp('IN ORDER TO HAVE A VARIABLE ROOT DEPTH CASE_ROOT MUST BE 1')
-    return
-end
-% %ZR=0.5*(2*BRoot)^r;
-% ZR = 1283*BRoot^0.1713-1914; ZR(ZR<5)=5; %%[mm]
-% ZR95(cc)=ZR;
-% % %%%%
-ZR50= NaN*ZR95;
-ZRmax= NaN*ZR95;
-% % %%%% Root depth Update
-[Rf]=Root_Fraction_General(Zs,CASE_ROOT,ZR95,ZR50,0*ZR95,0*ZR50,ZRmax,0*ZRmax);
+% if  CASE_ROOT~= 1 
+%     disp('IN ORDER TO HAVE A VARIABLE ROOT DEPTH CASE_ROOT MUST BE 1')
+%     return
+% end
+% % %ZR=0.5*(2*BRoot)^r;
+% % ZR = 1283*BRoot^0.1713-1914; ZR(ZR<5)=5; %%[mm]
+% % ZR95(cc)=ZR;
+% % % %%%%
+% ZR50= NaN*ZR95;
+% ZRmax= NaN*ZR95;
+% % % %%%% Root depth Update
+% [Rf]=Root_Fraction_General(Zs,CASE_ROOT,ZR95,ZR50,0*ZR95,0*ZR50,ZRmax,0*ZRmax);
 return
 %%%%%%
 

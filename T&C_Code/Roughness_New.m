@@ -2,7 +2,7 @@
 %   Subfunction  Roughness                  %
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-function[zom,zoh,disp_h,zom_H,zom_L,zoh_H,zoh_L,d_H,d_L,zom_other]=Roughness_New(D,ydepth,ICE_D,Cdeb,Deb_Par,hc_H,hc_L,LAI_H,Ccrown_L,Cwat,Curb,Crock,Cice)
+function[zom,zoh,disp_h,zom_H,zom_L,zoh_H,zoh_L,d_H,d_L,zom_other]=Roughness_New(D,ydepth,ICE_D,Cdeb,Deb_Par,Urb_Par,hc_H,hc_L,LAI_H,Ccrown_L,Cwat,Curb,Crock,Cice)
 %%%%%%%%%%%%%%%%%%%%
 %%REFERENCES %%   [Strack et al.,  2004]  --  [Brutsaert (1975)] --
 %%% Mahat et al 2013
@@ -25,7 +25,7 @@ zom_soil = 0.003; %% [m] bare soil roughness momentum
 zom_snow= 0.001; %% 0.001 %% [m] snow roughness momentum 
 zom_ice = 0.001*(Cice==1); %% [m] ice roughenss momentum 
 zom_wat = 0.0002*(Cwat == 1); %% %%0.0003 water  roughness momentum 
-zom_urb = 1*(Curb == 1); %%% 0.3-2.5 [m] urban landscape roughness momentum 
+zom_urb = Urb_Par.zom*(Curb > 0); %%% 0.3-2.5 [m] urban landscape roughness momentum 
 zom_rock = 0.0003*(Crock == 1); %% [m] rock roughness momentum 
 zom_debris = Deb_Par.zom*(Cdeb==1); %% [m] debris   roughness momentum 
 %zom = hc*(0.23 - LAI^0.25/10 - (y-1)/67);
@@ -63,7 +63,7 @@ end
 zom_L = (zom_L.*(max(0,1-D./hc_L)) + zom_snow*min(1,D./hc_L)).*(hc_L>0); %% [m] roughness comparison snow-vegetation  [Strack et al.,  2004]  
 zom_H = (zom_H.*(max(0,1-D./hc_H)) + zom_snow*min(1,D./hc_H)).*(hc_H>0); %% [m] roughness comparison snow-vegetation  [Strack et al.,  2004]  
 %%%%% 
-zom_other =  zom_soil*(1-Cwat)*(1-Crock)*(1-Curb)*(1-Cice) + zom_wat + zom_urb + zom_rock*(1-Cice) + zom_ice ; % roughness eddy diffusivities for momentum [m]
+zom_other =  zom_soil*(1-Cwat)*(1-Crock)*(1-Curb)*(1-Cice) + zom_wat + zom_urb*Curb + zom_rock*(1-Cice) + zom_ice ; % roughness eddy diffusivities for momentum [m]
 zom_other =  zom_other*(1-Cdeb)+ zom_debris; %% % roughness [m] comparison Debris - Other 
 if D > zom_other
     zom_other =  zom_snow; %%% [m] roughness comparison Other-Snow

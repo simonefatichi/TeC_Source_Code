@@ -4,7 +4,8 @@
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 function[O,ZWT,OF,OS,Psi_s_H,Psi_s_L,gsr_H,gsr_L,Exwat_H,Exwat_L,Rd,WTR,POT,OH,OL]=Soil_Water_MultiLayer(V,Zs,...
     dz,n,Ccrown,Osat,Ohy,nVG,alpVG,lVG,Ks_Zs,L,Pe,O33,Ks_mac,Omac,alpVGM,nVGM,lVGM,s_SVG,bVG,Phy1,SPAR,EvL_Zs,Inf_Zs,RfH_Zs,RfL_Zs,...
-    Rrootl_H,Rrootl_L,PsiL50_H,PsiL50_L,PsiX50_H,PsiX50_L)
+    Rrootl_H,Rrootl_L,PsiL50_H,PsiL50_L,PsiX50_H,PsiX50_L,Ts,Tdp,Psi_sto_00_H,Psi_sto_50_H,Psi_sto_00_L,Psi_sto_50_L,...
+    Salt,Osm_reg_Max_H,Osm_reg_Max_L,eps_root_base_H,eps_root_base_L)
 %%% INPUT
 %%%V -- Volume [mm] in the Layer 
 %%% Ks --- Saturation Conductivity Vertical [mm/h]
@@ -185,20 +186,28 @@ end
 Psi_s_H=-(Psi_s_H/1000)*1000*9.81/1e+6; %%[MPa]
 Psi_s_L=-(Psi_s_L/1000)*1000*9.81/1e+6; %%[MPa]
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%% Salinity effect
+if Salt>0
+    [Tdp_H,Tdp_L]=RootZone_Temp(Tdp,RfH_Zs,RfL_Zs);
+    for i=1:length(Ccrown)
+        [Psi_s_H(i)]=Salinity_Plant(Salt,Tdp_H(i),Ts,Psi_s_H(i),Psi_sto_00_H(i),Psi_sto_50_H(i),Osm_reg_Max_H(i),eps_root_base_H(i));
+        [Psi_s_L(i)]=Salinity_Plant(Salt,Tdp_L(i),Ts,Psi_s_L(i),Psi_sto_00_L(i),Psi_sto_50_L(i),Osm_reg_Max_L(i),eps_root_base_L(i));
+    end
+end  
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 rho2 = 55555555; %% [mmolH20 /m^3]; Water density
-rcyl= 2.0*1e-3 ;%%%  [m] radius cylinder of soil to which root has access to
+%rcyl= 2.0*1e-3 ;%%%  [m] radius cylinder of soil to which root has access to
 rroot= 0.5*1e-3 ;%% [0.5-6 *10^-3] [m] root radius
 Psi_s= zeros(n,1); 
 gsr_L=zeros(cc,n);
 gsr_H=zeros(cc,n);
-%%%%%
+%%%%% layer by layer analysis 
 for jk=1:n
     [Ko,Psi_s(jk)]=Conductivity_Suction(SPAR,Ks_Zs(jk),Osat(jk),Ohy(jk),L(jk),Pe(jk),O33(jk),alpVG(jk),nVG(jk),lVG(jk),...
         Ks_mac(jk),Omac(jk),alpVGM(jk),nVGM(jk),lVGM(jk),Phy1,s_SVG(jk),bVG(jk),O(jk)); 
     for i=1:cc
-        [gsr_L(i,jk)]= root_soil_Conductance(Ko,RfL_Zs(i,jk).*Rrootl_L(i).*Ccrown(i),rcyl,rroot,dz(jk)); % % [mmol H20 / m^2 ground s MPa]
-        [gsr_H(i,jk)]= root_soil_Conductance(Ko,RfH_Zs(i,jk).*Rrootl_H(i).*Ccrown(i),rcyl,rroot,dz(jk)); % [mmol H20 / m^2 ground s MPa]
+        [gsr_L(i,jk)]= root_soil_Conductance(Ko,RfL_Zs(i,jk).*Rrootl_L(i).*Ccrown(i),rroot,dz(jk)); % % [mmol H20 / m^2 ground s MPa]
+        [gsr_H(i,jk)]= root_soil_Conductance(Ko,RfH_Zs(i,jk).*Rrootl_H(i).*Ccrown(i),rroot,dz(jk)); % [mmol H20 / m^2 ground s MPa]
     end
 end
 Psi_s=-(Psi_s/1000)*1000*9.81/1e+6; %%[MPa]

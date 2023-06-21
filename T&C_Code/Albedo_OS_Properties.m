@@ -1,7 +1,7 @@
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %   Subfunction  Albedo_OtherSurface_Properties    %
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-function[sur_alb,e_sur]=Albedo_OS_Properties(Ccover,h_S,Deb_Par)
+function[sur_alb,e_sur]=Albedo_OS_Properties(Ccover,h_S,Par)
 %%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%% INPUT 
 %%% Ccover - Cwat Curb Crock %%% 
@@ -14,22 +14,22 @@ function[sur_alb,e_sur]=Albedo_OS_Properties(Ccover,h_S,Deb_Par)
 alb=NaN; 
 %%%%%%%%%%%%%%%%%%%%%
 if nargin < 3 
-    Deb_Par = NaN; 
+    Par = NaN; 
 end 
 %%ALBEDO  dry_vis dry_nir sat_vis sat_nir 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 if strcmp(Ccover,'Curb')
-    alb = 0.15; 
-    e_sur = 0.92; 
+    alb = Par.alb; 
+    e_sur = Par.e_sur; 
 end 
 if strcmp(Ccover,'Crock')
     alb = 0.25; 
     e_sur = 0.95; 
 end 
 if strcmp(Ccover,'Cdeb')
-    alb = Deb_Par.alb; 
-    e_sur = Deb_Par.e_sur ; 
+    alb = Par.alb; 
+    e_sur = Par.e_sur ; 
 end 
 %%% Visible 
 sur_alb.dir_vis = alb; 

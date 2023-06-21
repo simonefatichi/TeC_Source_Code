@@ -161,6 +161,12 @@ end
 if not(exist('Sllit','var'))
     Sllit = 2 ; %%% Litter Specific Leaf area [m2 Litter / kg DM]
 end
+%%%%
+if not(exist('Urb_Par','var'))
+    Urb_Par.alb= 0.15;
+    Urb_Par.e_sur= 0.92;
+    Urb_Par.zom= 1;
+end
 %%%%%%%%%%
 %%%%% Vegetation High Parameters
 if not(exist('Vmax_H','var'))
@@ -212,6 +218,15 @@ else
     VegH_Param.PsiX50_H=PsiX50_H;
     VegH_Param.Cx_H=Cx_H;
 end
+
+if not(exist('Osm_reg_Max_H','var'))
+    VegH_Param.Osm_reg_Max_H = 0*ones(1,cc);
+    VegH_Param.eps_root_base_H=  0.9*ones(1,cc);
+else
+    VegH_Param.Osm_reg_Max_H = Osm_reg_Max_H;   
+    VegH_Param.eps_root_base_H=  eps_root_base_H; 
+end
+
 
 %%%%% Vegetation Low Parameters
 if not(exist('Vmax_L','var'))
@@ -265,6 +280,13 @@ else
 end
 %%%%%%%%%%%%%%%%%%%%%%%%%
 
+if not(exist('Osm_reg_Max_L','var'))
+    VegL_Param.Osm_reg_Max_L = 0*ones(1,cc);
+    VegL_Param.eps_root_base_L=  0.9*ones(1,cc);
+else
+    VegL_Param.Osm_reg_Max_L = Osm_reg_Max_L;   
+    VegL_Param.eps_root_base_L=  eps_root_base_L; 
+end
 
 %%%%% Vegetation High Parameters for vegetation dynamics
 if not(exist('aSE_H','var'))
@@ -350,6 +372,12 @@ else
     VegH_Param_Dyn.MHcrop=  MHcrop_H; 
 end
 
+if not(exist('a_root_H','var'))
+    a_root_H=0.001; 
+else
+    a_root_H=a_root_H; 
+end 
+
 %%%%% Vegetation Low Parameters for vegetation dynamics
 if not(exist('aSE_L','var'))
     VegL_Param_Dyn.Sl = NaN*ones(1,cc);
@@ -433,3 +461,9 @@ else
     VegL_Param_Dyn.soCrop = soCrop_L;  
     VegL_Param_Dyn.MHcrop=  MHcrop_L; 
 end
+
+if not(exist('a_root_L','var'))
+    a_root_L=0.001; 
+else
+    a_root_L=a_root_L; 
+end 

@@ -146,10 +146,13 @@ alp_soil_tg = mean(alp_soil(Kinde)); %%[-]
 %%%%
 Tdp_space =  mean(Tdp,2); %%%
 Tdp_tg = mean(Tdp_space(Kinde)); %% % [°C]
+Tdpsnow_space =  mean(Tdpsnow,2); %%%
+Tdpsnow_tg = mean(Tdpsnow_space(Kinde)); %% % [°C]
 %%%%
 er_tg =  mean(er(Kinde)); %%  % [kg/s m^2]
 %%%
 TsVEG_tg  =  mean(TsVEG(Kinde));%% [°C]
+Ts_under_tg  =  mean(Ts_under(Kinde));%% [°C]
 DQ_S_tg = mean(DQ_S(Kinde)); %%[]
 DT_S_tg = mean(DT_S(Kinde)); %%[]
 dQ_S_tg = mean(dQ_S(Kinde)); %%[]
@@ -285,18 +288,20 @@ fprintf(fid(1),'%g\t',Tdp_tg );%78
 %%%%%%%%%%%%%%%%
 fprintf(fid(1),'%g\t',er_tg);%%79
 fprintf(fid(1),'%g\t',TsVEG_tg);%%80
-fprintf(fid(1),'%g\t',DQ_S_tg);%%81
-fprintf(fid(1),'%g\t',DT_S_tg);%%82
-fprintf(fid(1),'%g\t',dQ_S_tg);%%83
+fprintf(fid(1),'%g\t',Ts_under_tg);%%81
+fprintf(fid(1),'%g\t',Tdpsnow_tg);%%82
+fprintf(fid(1),'%g\t',DQ_S_tg);%%83
+fprintf(fid(1),'%g\t',DT_S_tg);%%84
+fprintf(fid(1),'%g\t',dQ_S_tg);%%85
 %%%%%%%%%
-fprintf(fid(1),'%g\t',Imelt_tg);%%84
-fprintf(fid(1),'%g\t',Smelt_tg);%%85
-fprintf(fid(1),'%g\t',Tice_tg);%%86
-fprintf(fid(1),'%g\t',Vice_tg);%%87
+fprintf(fid(1),'%g\t',Imelt_tg);%%86
+fprintf(fid(1),'%g\t',Smelt_tg);%%87
+fprintf(fid(1),'%g\t',Tice_tg);%%88
+fprintf(fid(1),'%g\t',Vice_tg);%%89
 %%%
-fprintf(fid(1),'%g\t',CK1_tg);%%88
-fprintf(fid(1),'%g\t',t);%%89
-fprintf(fid(1),'%g\t\n',CKt);%%90
+fprintf(fid(1),'%g\t',CK1_tg);%%89
+fprintf(fid(1),'%g\t',t);%%90
+fprintf(fid(1),'%g\t\n',CKt);%%91
 %%%%
 if t==N_time_step
     fclose(fid(1));
@@ -904,6 +909,9 @@ if toutp==2
     Dr_H_spatial=Dr_H_space;
     Dr_L_spatial=Dr_L_space;
     EIn_rock_spatial = EIn_rock;
+    EIn_urb_spatial = EIn_urb;
+    SE_rock_spatial =  SE_rock;
+    SE_urb_spatial =  SE_urb;
     %%%%
     In_spatial =  In_H_space + In_L_space + SP_wc + In_SWE  + In_urb + In_rock + IP_wc;
     Inveg_spatial = In_H_space + In_L_space;
@@ -929,10 +937,12 @@ if toutp==2
     %%%%%%%%%
     O_spatial=O_space;
     V_spatial=V_space;
-    Vice_spatial=Vice_space;    
+    Vice_spatial=Vice_space;
     Tdp_spatial = Tdp_space;
+    Tdpsnow_spatial=Tdpsnow_space;
     SAT_spatial = (ZWT==0);
     TsVEG_spatial = TsVEG;
+    Ts_under_spatial = Ts_under;
     %%%%%%%%%%%%%%%%
     er_spatial =  er ;
     DQ_S_spatial =DQ_S;
@@ -1041,6 +1051,9 @@ else
     Dr_H_spatial = ((toutp-2)*Dr_H_spatial + Dr_H_space)/(toutp-1) ;
     Dr_L_spatial = ((toutp-2)*Dr_L_spatial + Dr_L_space)/(toutp-1) ;
     EIn_rock_spatial = ((toutp-2)*EIn_rock_spatial + EIn_rock)/(toutp-1) ;
+    EIn_urb_spatial = ((toutp-2)*EIn_urb_spatial + EIn_urb)/(toutp-1) ;
+    SE_rock_spatial = ((toutp-2)*SE_rock_spatial + SE_rock)/(toutp-1);
+    SE_urb_spatial = ((toutp-2)*SE_urb_spatial + SE_urb)/(toutp-1);
     %%%%%
     In_spatial = ((toutp-2)*In_spatial + In_H_space + In_L_space + SP_wc + In_SWE + In_urb + In_rock + IP_wc)/(toutp-1) ;
     Inveg_spatial = ((toutp-2)*Inveg_spatial + In_H_space + In_L_space)/(toutp-1) ;
@@ -1065,11 +1078,13 @@ else
     Q_channel_spatial = ((toutp-2)*Q_channel_spatial +  Q_channel)/(toutp-1) ;
     %%%%%%%%%
     V_spatial= ((toutp-2)*V_spatial + V_space)/(toutp-1) ;
-    Vice_spatial=((toutp-2)*Vice_spatial + Vice_space)/(toutp-1) ;    
+    Vice_spatial=((toutp-2)*Vice_spatial + Vice_space)/(toutp-1) ;
     O_spatial = ((toutp-2)*O_spatial + O_space)/(toutp-1) ;
     SAT_spatial = SAT_spatial + (ZWT==0) ;
     Tdp_spatial = ((toutp-2)*Tdp_spatial + Tdp_space)/(toutp-1) ;
     TsVEG_spatial = ((toutp-2)*TsVEG_spatial + TsVEG)/(toutp-1) ;
+    Tdpsnow_spatial = ((toutp-2)*Tdpsnow_spatial + Tdpsnow_space)/(toutp-1) ;
+    Ts_under_spatial = ((toutp-2)*Ts_under_spatial + Ts_under)/(toutp-1) ;
     %%%%%%%%%
     er_spatial = ((toutp-2)*er_spatial + er)/(toutp-1) ;
     DQ_S_spatial = DQ_S_spatial + DQ_S;
@@ -1127,10 +1142,12 @@ if  length(intersect(t,tstore))==1 ||  t==N_time_step
         'SWE_spatial','SND_spatial','WR_SP_spatial','ros_spatial','dw_SNO_spatial','U_SWE_spatial','In_SWE_spatial','SP_wc_spatial',...
         'ICE_spatial','ICE_D_spatial','WR_IP_spatial','NICe_spatial','IP_wc_spatial','SWE_avalanched_spatial',...
         'T_H_spatial','T_L_spatial','EIn_H_spatial','EIn_L_spatial','EG_spatial','ESN_spatial','EWAT_spatial','EICE_spatial','EIn_rock_spatial',...
+        'EIn_urb_spatial','SE_rock_spatial','SE_urb_spatial',...
         'Dr_H_spatial','Dr_L_spatial','In_spatial','Inveg_spatial','In_rock_spatial','FROCK_spatial','WAT_spatial',...
         'f_spatial','WIS_spatial','Rd_spatial','Rh_spatial',...
         'Lk_spatial','Lk_rock_spatial','Lk_wat_spatial','OF_spatial','OS_spatial','ZWT_spatial','Qlat_in_spatial',...
         'Qlat_out_spatial','q_runon_spatial','Q_channel_spatial','O_spatial','V_spatial','SAT_spatial','Tdp_spatial','TsVEG_spatial',...
+        'Ts_under_spatial','Tdpsnow_spatial',...
         'er_spatial','DQ_S_spatial','DT_S_spatial','dQ_S_spatial',...
         'Tice_spatial','Imelt_spatial','Smelt_spatial','Vice_spatial',...
         'CK1_spatial',...
