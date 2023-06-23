@@ -299,9 +299,9 @@ fprintf(fid(1),'%g\t',Smelt_tg);%%87
 fprintf(fid(1),'%g\t',Tice_tg);%%88
 fprintf(fid(1),'%g\t',Vice_tg);%%89
 %%%
-fprintf(fid(1),'%g\t',CK1_tg);%%89
-fprintf(fid(1),'%g\t',t);%%90
-fprintf(fid(1),'%g\t\n',CKt);%%91
+fprintf(fid(1),'%g\t',CK1_tg);%%90
+fprintf(fid(1),'%g\t',t);%%91
+fprintf(fid(1),'%g\t\n',CKt);%%92
 %%%%
 if t==N_time_step
     fclose(fid(1));

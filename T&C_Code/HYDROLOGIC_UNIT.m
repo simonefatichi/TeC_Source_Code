@@ -475,10 +475,11 @@ end
 %%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%% Re-Transformation from Ared (rock content)
-%Not retransformed -- f=f*Ared;   WTR=WTR*Ared;  Qi_in=Qi_in*Ared;
+%Not retransformed --    WTR=WTR*Ared;  Qi_in=Qi_in*Ared;
 Rd = Rd*Ared;
 Qi_out=Qi_out*Ared;
 Lk = Lk*Ared;
+f=f*Ared;
 %%%% Re-projected to the vertical coordinate
 Qi_out = Qi_out*Asur;
 Rh = Rh*Asur;
@@ -510,6 +511,8 @@ EIn_rock = EIn_rock*Asur;
 SWE = SWE*Asur;
 In_SWE = In_SWE*Asur;
 SP_wc = SP_wc*Asur;
+U_SWE=U_SWE*Asur; 
+NIn_SWE=NIn_SWE*Asur; 
 In_H=In_H*Asur;
 In_L=In_L*Asur;
 In_Litter=In_Litter*Asur;
@@ -527,10 +530,15 @@ IP_wc = IP_wc*Asur;
 FROCK=FROCK*Asur;%
 Lk_wat=Lk_wat*Asur;
 Lk_rock=Lk_rock*Asur;
+Imelt=Imelt*Asur;
+Smelt=Smelt*Asur;
+
 %%% Mantained in n-coordinate and accouting for rock content
-%V,WTR,f
+%V,WTR,Vice 
 %%%%%%%%%% Mantained in the projected area n-coordinate
-%WIS,An_L,An_H,Rdark_L,Rdark_H,SND,WR_SP,U_SWE,NIn_SWE,dQ,DQ,DT,...
-%Rn,H,QE,Qv,G,Qfm,ICE_D,WR_IP,Imelt,Smelt,
+%f,WIS,An_L,An_H,Rdark_L,Rdark_H,SND,WR_SP,dQ,DQ,DT,...
+%Rn,H,QE,Qv,Lpho,G,Gfin,Qfm,dQVEG,HV,QEV,
+%ICE_D,WR_IP
 %Vx_H,Vl_H,Vx_L,Vl_L,...
+%SIF_H,SIF_L
 end
