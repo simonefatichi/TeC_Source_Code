@@ -247,7 +247,7 @@ end
 %%%%%%%%%%%%%
 q_runon = q_run;  %% [mm/h]
 ydepth = q_runon*dth; %% [mm]  su Asur
-WATtm1 = WAT;   %% [mm] %% It changes only in case of freezing lakes
+WATtm1 = WAT;   %% [mm] %% It changes only in case of freezing lakes or in case Cwat < 1 
 %%%%%%
 WIS=WIS+IrD*dth; %%% Drip Irrigation added;; % [mm]
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -323,14 +323,14 @@ end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%  WATER
 if Cwat > 0
-    WAT = WATtm1 - EWAT*dth + (WR_SP*(1-Cice)+WR_IP)*Cwat + Cwat*dth*(Pr_liq*(1-Csnow)*(1-Cicew) + Pr_sno*(1-Cicew)*(1-Csnow)) + q_runon*dth*Cwat + sum(Qi_in)*dth*Cwat; %%[mm]
+    WAT = WATtm1 - EWAT*dth + (WR_SP*(1-Cice)+WR_IP)*Cwat + Cwat*dth*(Pr_liq*(1-Csnow)*(1-Cicew) + Pr_sno*(1-Cicew)*(1-Csnow)) + q_runon*dth*Cwat  + sum(Qi_in)*dth*Cwat; %%[mm]
     [Lk_wat]=Leakage_Rock(Krock,WAT,dth); %% [mm]
     WAT=WAT-Lk_wat;
 else
     Lk_wat = 0;
     WAT = 0;
 end
-%%%%% URBAN 
+%%%%% URBAN
 if Curb > 0
     [Lk_urb]=Leakage_Rock(Krock,In_urb,dth); %% [mm]
     In_urb=In_urb-Lk_urb;

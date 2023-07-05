@@ -762,19 +762,23 @@ if ydepth > 0
     if ELitter >= q_run
         ELitter = ELitter-q_run; %%[mm/h]
         EWAT = EWAT + q_run;
+        WAT = WAT + q_run; 
         q_run = 0;
     else
         q_run = q_run - ELitter; %%[mm/h]
         EWAT = EWAT + ELitter;
+        WAT = WAT + ELitter; 
         ELitter = 0;
     end
     if EG >= q_run
         EG = EG-q_run; %%[mm/h]
         EWAT = EWAT + q_run;
+        WAT = WAT + q_run; 
         q_run = 0;
     else
         q_run = q_run - EG; %%[mm/h]
         EWAT = EWAT + EG;
+        WAT = WAT + EG; 
         EG = 0;
     end
 end

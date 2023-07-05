@@ -558,8 +558,9 @@ disp(1000*Computational_Time/NN)
 %PROF1 = profile('info');
 %profile('status')
 %profile viewer
-
-NEE = -(NPP_H+NPP_L)*Ccrown' + R_litter + R_microbe + R_ew; %% [gC/m2 day]
+if OPT_SoilBiogeochemistry == 1
+    NEE = -(NPP_H+NPP_L)*Ccrown' + R_litter + R_microbe + R_ew; %% [gC/m2 day]
+end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%% MASS BALANCE CHECK
 dV= (V(1,:)-V(end,:))*Asur*Ared +(Vice(1,:)-Vice(end,:))*Asur*Ared;
