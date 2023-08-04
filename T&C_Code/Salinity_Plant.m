@@ -42,3 +42,15 @@ Psi_L=Psi_s;
 % Psi_target = (log((1 -Rgsw)/Rgsw) - q2)/p2; 
 %%%%%%%%%%%%
 end 
+
+
+%% Salt Units 
+% NaCl = 1 mg/l   0.0172 mol/l   =17.2 mol/m3 
+% 15*10-4 dS/m ;;  ECe (2-8) 
+% 
+% 1 dS/m - 1000 uS/cm  = 640 mg/l (common salt)  530 mg/l (NaCl) 
+% 
+% 10 mol/m3 = 1 dS/m  // 580 mg/l 
+% 35 PSU – 35.16 g/kg  - 1.02 kg/l -  594  (600) mol/m3  - 53-59 dS/m      
+% - 55'000 us/cm seawater  --  35 ppt 
+

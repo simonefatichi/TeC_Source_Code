@@ -164,9 +164,17 @@ esat_TvLshd=611*exp(17.27*TvLshd/(237.3+TvLshd)); %%[Pa] vapor pressure saturati
 qTvLshd_sat=(0.622*esat_TvLshd)/(Pre-0.378*esat_TvLshd); %% Specific humidity at esat(Ts)  []
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%% Dealing with dew %%% 
-if qTa > qTg_sat %% Dew formation 
+if qTa > qTvHshd_sat %% Dew formation 
     dw_H = dw_H*0 + 1;
     dw_L = dw_L*0 + 1;
+    r_soil = 0;
+    alp_soil = 1; 
+    b_soil=1; 
+    r_litter = 0*r_litter; 
+    alp_litter = 1; 
+end 
+%%%%%%%%%%%%%%%%%%%%
+if qTa > qTg_sat %% Dew formation 
     r_soil = 0;
     alp_soil = 1; 
     b_soil=1; 
