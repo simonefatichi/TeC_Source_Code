@@ -4,7 +4,7 @@
 function[B,RB,LAI,LAIdead,ManI,PHE_S,dflo,AgeL,AgeDL]= Crop_Planting_Harvest(B,RBtm1,dtd,LAI,LAIdead,PHE_S,dflo,AgeL,AgeDL,Datam,Mpar)
 %%%%%%
 DD = datenum(Datam(1),Datam(2),Datam(3),Datam(4),0,0);
-Date_sowing=Mpar.Date_sowing+15; %%% Emergence as Date of sowing + 15 days  
+Date_sowing=Mpar.Date_sowing+10; %%% Emergence as Date of sowing + 10 days  
 Date_harvesting=Mpar.Date_harvesting;
 Crop_B= Mpar.Crop_B; 
 %%%%%

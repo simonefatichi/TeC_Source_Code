@@ -1,7 +1,7 @@
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-function[P,LEAK_NH4,LEAK_NO3,LEAK_P,LEAK_K,LEAK_DOC,LEAK_DON,LEAK_DOP,Nuptake_H,Puptake_H,Kuptake_H,Nuptake_L,Puptake_L,Kuptake_L,RexmyI,...
+function[P,LEAK_NH4,LEAK_NO3,LEAK_P,LEAK_K,LEAK_DOC,LEAK_DON,LEAK_DOP,R_NH4,R_NO3,R_P,R_K,R_DOC,R_DON,R_DOP,Nuptake_H,Puptake_H,Kuptake_H,Nuptake_L,Puptake_L,Kuptake_L,RexmyI,...
     R_litter,R_microbe,R_litter_sur,R_ew,VOL,N2flx,Min_N,Min_P,R_bacteria,RmycAM,RmycEM,Prod_B,Prod_F,BfixN,NavlI,LitFirEmi]= BIOGEO_UNIT(Ptm1,IS,ZBIOG,rsd,PH,Ts,Ta,Psi_s,Se,Se_fc,V,VT,Ccrown,Bio_Zs,RfH_Zs,RfL_Zs,...
-    Lk,T_H,T_L,Broot_H,Broot_L,LAI_H,LAI_L,...
+    Lk,Rd,Rh,Pr,T_H,T_L,Broot_H,Broot_L,LAI_H,LAI_L,...
     SupN_H,SupP_H,SupK_H,SupN_L,SupP_L,SupK_L,Rexmy,RexmyI,ExEM,NavlI,Pcla,Psan,...
     B_IO,jDay,FireA,AAET)
 %%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -38,6 +38,13 @@ DepK=B_IO.DepK;
 Tup_P=B_IO.Tup_P; 
 Tup_K=B_IO.Tup_K; 
 SC_par = B_IO.SC_par; 
+%%%%%%
+if Rh>0
+    f_run=1-Rh/Pr; f_run(f_run<0)=0; %% 1- fraction of direct infiltration excess runoff
+    DepN=DepN*f_run;
+    DepP=DepP*f_run;
+    DepK=DepK*f_run;
+end
 %%%%%%%%%%%%%%%%%%%%%%%
 ManF = B_IO.ManF(jDay);  %%% [gC /m2 day] 
 N_Man =B_IO.N_Man; %% Manure  [gC/gN]
@@ -57,7 +64,7 @@ IMAN(6)=  ManF./K_Man; % [gK/m^2 day]
 opt_cons_CUE=1;
 [BiogeoPar]=Biogeochemistry_Parameter(opt_cons_CUE);
 %%%%%%%%%
-[LEAK_NH4,LEAK_NO3,LEAK_P,LEAK_K,LEAK_DOC,LEAK_DON,LEAK_DOP]= Biogeo_Leakage(Ptm1,Lk,V,BiogeoPar);
+[LEAK_NH4,LEAK_NO3,LEAK_P,LEAK_K,LEAK_DOC,LEAK_DON,LEAK_DOP]= Biogeo_Leakage(Ptm1,Lk+Rd,V,BiogeoPar);
 %%%%
 for cc=1:length(Ccrown)
     if Broot_H(cc) > 0 
@@ -89,7 +96,21 @@ if (sum(P>(10^15)))>1
     disp('Issue in the Biogeochemistry Pools')
     return
 end
-%%%%%  Passing External Uptakes in units of [./m2 PFT]  
+%%%%%%%%%%%%%%%%%%%%%%%%%
+rRd=Rd./(Lk+Rd); rRd(isnan(rRd))=0; 
+R_NH4=rRd*LEAK_NH4; LEAK_NH4=LEAK_NH4-R_NH4;
+R_NO3=rRd*LEAK_NO3;LEAK_NO3=LEAK_NO3-R_NO3;
+R_P=rRd*LEAK_P;LEAK_P=LEAK_P-R_P;
+R_K=rRd*LEAK_K;LEAK_K=LEAK_K-R_K;
+R_DOC=rRd*LEAK_DOC;LEAK_DOC=LEAK_DOC-R_DOC;
+R_DON=rRd*LEAK_DON;LEAK_DON=LEAK_DON-R_DON;
+R_DOP=rRd*LEAK_DOP; LEAK_DOP=LEAK_DOP-R_DOP;
+if Rh>0
+    R_NH4=R_NH4+DepN*(1-f_run);
+    R_P=R_P+DepP*(1-f_run);
+    R_K=R_K+DepK*(1-f_run);
+end
+%%%%%  Passing External Uptakes in units of [./m2 PFT]
 Nuptake_H=(NH4_Uptake_H+NO3_Uptake_H).*(1-SupN_H)./Ccrown;
 Puptake_H=P_Uptake_H.*(1-SupP_H)./Ccrown;
 Kuptake_H=K_Uptake_H.*(1-SupK_H)./Ccrown;

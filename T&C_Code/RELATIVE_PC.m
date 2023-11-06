@@ -1,7 +1,7 @@
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %   Subfunction  RELATIVE PHOTOSYNTETIC CAPACITY %
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-function[e_rel]= RELATIVE_PC(AgeL,NBL_Im,BLeaf,age_cr,aSE,L_day,Lmax_day,jDay)
+function[e_rel]= RELATIVE_PC(AgeL,dflo,NBL_Im,BLeaf,age_cr,aSE,L_day,Lmax_day,jDay)
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 OPT_PC=6;
 switch OPT_PC
@@ -45,6 +45,16 @@ switch OPT_PC
             %e_rel = 0.3158 + (NBL_Im^-0.2381)  -0.001494*(AgeL);
             e_rel(e_rel>1)=1; 
         end
+        %%%%
+        if  aSE == 5
+            r_age2 = dflo/age_cr;
+            %%%
+            if r_age2<1
+                e_rel=1;
+            else
+                e_rel= r_age2.^-8;  e_rel(e_rel>1)=1;
+            end
+        end 
     case 7
         %%%% Bauerle et al 2012 PNAS -- adjusted of 15 min
         e_rel = (L_day./(Lmax_day-0.25)).^2;

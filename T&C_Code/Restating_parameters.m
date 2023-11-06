@@ -367,9 +367,11 @@ end
 if not(exist('soCrop_H','var'))
     VegH_Param_Dyn.soCrop = NaN*ones(1,cc);
     VegH_Param_Dyn.MHcrop=  NaN*ones(1,cc);
+    VegH_Param_Dyn.Sl_emecrop=  NaN*ones(1,cc);
 else
     VegH_Param_Dyn.soCrop = soCrop_H;  
     VegH_Param_Dyn.MHcrop=  MHcrop_H; 
+    VegH_Param_Dyn.Sl_emecrop= Sl_emecrop_H;
 end
 
 if not(exist('a_root_H','var'))
@@ -457,9 +459,11 @@ end
 if not(exist('soCrop_L','var'))
     VegL_Param_Dyn.soCrop = NaN*ones(1,cc);
     VegL_Param_Dyn.MHcrop=  NaN*ones(1,cc);
+    VegL_Param_Dyn.Sl_emecrop=  NaN*ones(1,cc);
 else
     VegL_Param_Dyn.soCrop = soCrop_L;  
     VegL_Param_Dyn.MHcrop=  MHcrop_L; 
+    VegL_Param_Dyn.Sl_emecrop= Sl_emecrop_L;
 end
 
 if not(exist('a_root_L','var'))

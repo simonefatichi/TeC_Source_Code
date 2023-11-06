@@ -5,7 +5,7 @@
 %%% et al., 2008  Sitch et al 2003 White et al 2000  Knorr 2000  Arora and
 %%% Boer 2003
 function[LAI,NPP,Rg,RA,Rms,Rmr,Rmc,ANPP,LAIdead,Sr,Slf,Sfr,Swm,Sll,NLeaf,NLeafdead,NBLeaf,Nreserve,Preserve,Kreserve]= VEG_DYN_RES(B,dtd,Btm1,Tam,Tsm,An,Rdark,...
-    Sl,mSl,St,r,gR,aSE,AgeL,AgeDL,age_cr,dc_C,Tcold,Bfac,GF,dd_max,PHE_S,dsn,drn,fab,fbe,Wm,Mf,Klf,NBLeaftm1,Nreservetm1,Preservetm1,Kreservetm1,...
+    Sl,mSl,Sl_emecrop,St,r,gR,aSE,AgeL,AgeDL,age_cr,dc_C,Tcold,Bfac,GF,dd_max,PHE_S,dsn,drn,fab,fbe,Wm,Mf,Klf,NBLeaftm1,dmg,Nreservetm1,Preservetm1,Kreservetm1,...
     Nuptake,Puptake,Kuptake,rNcR,rNc,rPc,rKc,OPT_EnvLimitGrowth)
 %%%% INPUT
 %Sl specific leaf area of  biomass [m^2 / kg C]
@@ -53,6 +53,13 @@ ftransR = St.ftransR;
 %%%%%%%%%%%%%%
 if mSl == 0
     LAItm1 = Sl*(Btm1(1)); %% Leaf area index for green biomass
+
+    if aSE==5  %% for crops
+         %%% theoretically should be using the AgeLtm1 approximated as -1 day 
+        Sl_n=Sl+(1-(AgeL-1)./dmg)*(Sl_emecrop)*((AgeL-1)<dmg); 
+        LAItm1 = Sl_n*Btm1(1); %% Leaf area index for green biomass
+    end
+
     LAIdeadtm1 = Sl*(Btm1(7)); %% Lead area index standing dead biomass
 else
     LAItm1 = Sl*((exp(mSl*Btm1(1))-1)/mSl);
@@ -61,6 +68,12 @@ end
 %%%%%%%%%%
 if mSl == 0
     LAI = Sl*(B(1)); %% Leaf area index for green biomass
+
+    if aSE==5  %% for crops
+        Sl_n=Sl+(1-AgeL./dmg)*(Sl_emecrop)*(AgeL<dmg);
+        LAI = Sl_n*B(1); %% Leaf area index for green biomass
+    end
+
     LAIdead = Sl*(B(7)); %% Lead area index standing dead biomass
 else
     LAI = Sl*((exp(mSl*B(1))-1)/mSl);

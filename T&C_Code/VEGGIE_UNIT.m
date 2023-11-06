@@ -91,6 +91,8 @@ PAR_th = Veg_Param_Dyn.PAR_th(cc);
 PsiL50=Veg_Param_Dyn.PsiL50(cc);
 PsiL00=Veg_Param_Dyn.PsiL00(cc);
 soCrop=Veg_Param_Dyn.soCrop(cc); 
+Sl_emecrop=Veg_Param_Dyn.Sl_emecrop(cc);
+
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 jDay_cut = Mpar.jDay_cut;
 LAI_cut = Mpar.LAI_cut;
@@ -160,13 +162,13 @@ T_SPAN = [0 dtd];  %%%%%%%
 %%%%%%%%%%%%%%%%%%%%%
 sol=ode45(@VEGETATION_DYNAMIC,T_SPAN,Btm1,OPT_VD,...
     Tam,Tsm,An,Rdark,Bfac_day,Bfac_alloc,FNC,Se_bio,Tdp_bio,dtd,GF,...
-    Sl,mSl,Stoich,r,rNcR,gR,aSE,Trr,dd_max,dc_C,Tcold,drn,dsn,age_cr,PHE_Stm1,AgeLtm1,AgeDLtm1,LtR,eps_ac,...
-    Mf,Wm,fab,fbe,Klf,ff_r,sum(Rexmy),NBLeaftm1,dflotm1,Navailtm1,Pavailtm1,Kavailtm1,soCrop,TBio,GirdOpt,OPT_EnvLimitGrowth,OPT_VCA);
+    Sl,mSl,Sl_emecrop,Stoich,r,rNcR,gR,aSE,Trr,dd_max,dc_C,Tcold,drn,dsn,age_cr,PHE_Stm1,AgeLtm1,AgeDLtm1,LtR,eps_ac,...
+    Mf,Wm,fab,fbe,Klf,ff_r,dmg,sum(Rexmy),NBLeaftm1,dflotm1,Navailtm1,Pavailtm1,Kavailtm1,soCrop,TBio,GirdOpt,OPT_EnvLimitGrowth,OPT_VCA);
 %%%%%%%%%%%%%%%%%%
 B = deval(sol,dtd);
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 [LAI,NPP,Rg,RA,Rms,Rmr,Rmc,ANPP,LAIdead,Sr,Slf,Sfr,Swm,Sll,NLeaf,NLeafdead,NBLeaf,Nreserve,Preserve,Kreserve]= VEG_DYN_RES(B,dtd,Btm1,Tam,Tsm,An,Rdark,...
-    Sl,mSl,Stoich,r,gR,aSE,AgeLtm1,AgeDLtm1,age_cr,dc_C,Tcold,Bfac_day,GF,dd_max,PHE_Stm1,dsn,drn,fab,fbe,Wm,Mf,Klf,NBLeaftm1,...
+    Sl,mSl,Sl_emecrop,Stoich,r,gR,aSE,AgeLtm1,AgeDLtm1,age_cr,dc_C,Tcold,Bfac_day,GF,dd_max,PHE_Stm1,dsn,drn,fab,fbe,Wm,Mf,Klf,NBLeaftm1,dmg,...
     Nreservetm1,Preservetm1,Kreservetm1,Nuptake,Puptake,Kuptake,rNcR,rNc,rPc,rKc,OPT_EnvLimitGrowth);
 B(8)=0; %% Re-initialize B(8)
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -175,7 +177,7 @@ B(8)=0; %% Re-initialize B(8)
     LAIdead,NLeafdead,AgeDLtm1,...
     PHE_Stm1,LAI,aSE,age_cr,jDay,Tsmm,Bfac_day,Bfac_week,NPPm,PAR_Im(3),L_day,Bfac_lo,Bfac_ls,Tlo,Tls,mjDay,LDay_min,LDay_cr,dflotm1,dmg,PAR_th,LAI_min,jDay_cut,LAI_cut);
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-[e_rel]= RELATIVE_PC(AgeL,NBL_Im,B(1),age_cr,aSE,L_day,Lmax_day,jDay);
+[e_rel]= RELATIVE_PC(AgeL,dflo,NBL_Im,B(1),age_cr,aSE,L_day,Lmax_day,jDay);
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 RB(1:7)=0; %% Removed Live Leaves/ Sapwood/ Fine Roots /Carbohydrate Reserve /Fruit and Flower /Heartwood - Dead Sapwood /Standing Dead Leaves
 %%%%%%%%%% Grass Cut and Grazing

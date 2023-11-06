@@ -5,8 +5,8 @@
 %%% et al., 2008  Sitch et al 2003 White et al 2000  Knorr 2000  Arora and
 %%% Boer 2003
 function[dB]= VEGETATION_DYNAMIC(t,B,Tam,Tsm,An,Rdark,Bfac,Bfac_alloc,FNC,Se_bio,Tdp_bio,dtd,GF,...
-    Sl,mSl,St,r,rNc,gR,aSE,Trr,dd_max,dc_C,Tcold,drn,dsn,age_cr,PHE_S,AgeL,AgeDL,LtR,eps_ac,...
-    Mf,Wm,fab,fbe,Klf,ff_r,Rexmy,NBLeaf,dflo,Nreserve,Preserve,Kreserve,soCrop,TBio,GirdOpt,OPT_EnvLimitGrowth,OPT_VCA)
+    Sl,mSl,Sl_emecrop,St,r,rNc,gR,aSE,Trr,dd_max,dc_C,Tcold,drn,dsn,age_cr,PHE_S,AgeL,AgeDL,LtR,eps_ac,...
+    Mf,Wm,fab,fbe,Klf,ff_r,dmg,Rexmy,NBLeaf,dflo,Nreserve,Preserve,Kreserve,soCrop,TBio,GirdOpt,OPT_EnvLimitGrowth,OPT_VCA)
 %%%% INPUT
 %%% OUTPUT
 %%% dB [gC/m^2 d]
@@ -67,6 +67,11 @@ B(B<0)=0;
 %Sl specific leaf area of  biomass [m^2 / gC]
 if mSl==0
     LAI = Sl*B(1); %% Leaf area index for green biomass
+
+    if aSE==5  %% for crops 
+        Sl=Sl+(1-AgeL./dmg)*(Sl_emecrop)*(AgeL<dmg); 
+        LAI = Sl*B(1); %% Leaf area index for green biomass
+    end 
 else
     LAI = Sl*((exp(mSl*B(1))-1)/mSl);
 end
@@ -111,8 +116,9 @@ if (PHE_S == 2)
 end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%% PHE_S -->  DORMANT 1 - MAX GROWTH 2 - NORMAL GROWTH 3 - SENESCENCE 4 -
-%%% aSE  %%% PHENOLOGY KIND -- 1 Seasonal Plant --  0 Evergreen  -- 2 Grass species
-if (aSE == 1 || aSE == 2 || aSE == 5) && ((PHE_S == 4) ||  (PHE_S == 1)) %% Decidous  dormant or senescente
+%%% aSE  %%% PHENOLOGY KIND -- 1 Seasonal Plant --  0 Evergreen  -- 2 Grass
+%%% species -- 3 Tropical evergreen -- 5 Crops 
+if (aSE == 1 || aSE == 2 ) && ((PHE_S == 4) ||  (PHE_S == 1)) %% Decidous  dormant or senescente
     if (aSE == 1 || aSE == 2 )
         %%%%%%%%%% Constrain Reserve
         if (B(4)< 0.67*B(2))  %%%  [2/3 of Sapwood for reserve Friend et al., 1997]
@@ -129,13 +135,6 @@ if (aSE == 1 || aSE == 2 || aSE == 5) && ((PHE_S == 4) ||  (PHE_S == 1)) %% Deci
             else
                 fr=0;  fs=1;  fc = 0;
             end
-        end
-    elseif (aSE == 5) %%% Crop maturing and harvest phase
-        fr=0;  fs = 0;  fl = 0;  ff = ff_r;
-        if (B(4)< 0.67*B(5)) %  [2/3 of Grains for reserve in Crops]
-            fc = 1-ff; 
-        else
-            ff= 1; fc = 0;
         end
     end
     %%%
@@ -154,6 +153,10 @@ else
             C = 1/(1+eps_ac*(fl1+fr1));
         else
             C=1;
+            %%%% for crop to prioritize leaves in the first phase 
+            if (aSE == 5) && (PHE_S == 2)
+                ff =ff_r*dflo./dmg;
+            end
         end
     end
     %%%%%%%%%% Constrain Reserve
@@ -173,6 +176,18 @@ else
     fr = fr1*(1- ff)*C;
     fs = fs1*(1- ff)*C;
 end
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%% Crop - ripening phase 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%if (aSE == 5) && ((PHE_S == 3)  || (PHE_S == 4) ||  (PHE_S == 1)) %%
+if (aSE == 5) && ( (PHE_S == 4) ||  (PHE_S == 1)) %%
+    fr=0;  fs = 0;  fl = 0;  ff = ff_r;
+    if (B(4)< 0.67*B(5)) %  [2/3 of Grains for reserve in Crops]
+        fc = 1-ff;
+    else
+        ff= 1; fc = 0;
+    end
+end 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%% Constrain Allocation
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -246,7 +261,8 @@ switch aSE
         %%%%
         dla= dlaK*AgeL/((age_cr)^2); %% [1/d] Mortality for normal leaf age
     case 5
-        dla= min(1/age_cr,AgeL/((age_cr)^2)); %% [1/d] Mortality as in grass
+        %dla= min(0.99,(1/age_cr)*(AgeL/age_cr).^4); %% [1/d] Mortality for crop
+        dla=(1/age_cr)*(0.5*tanh(10*(AgeL/age_cr)-7)+0.5); %% [1/d] Mortality for crop
 end
 %%%%%%
 %%% Leaf Mortality to Cold Stress  Linear [Cox 2001]

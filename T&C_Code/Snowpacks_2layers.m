@@ -94,8 +94,14 @@ SWEteb=min(SWEteb,SWE);
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 if SWEteb <= 0
-    %%%
-    disp('ERROR: Two layers Snow Mode and not Snow')
+    %%% All snow consumed by evaporation 
+    Sm_top=0;
+    dQ1 = Rn + Qv - H - QE -G0;   % [W/m^2]  Variation Heat in the Snowpack
+    TsF = 0;
+    dQres = dQ1;
+    if SWEtm1 <=0
+        disp('ERROR: Two layers Snow Mode and not Snow')
+    end
 else
     %%%%%%%%%%
     %%%% ENERGY BALANCE

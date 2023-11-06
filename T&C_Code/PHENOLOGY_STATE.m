@@ -90,7 +90,7 @@ switch PHE_Stm1
         else
             PHE_S = 3;
         end
-        if (aSE == 3) &&  (dflo >= age_cr) %%%%  (AgeLtm1 >= age_cr)   (PAR_Im<-PAR_th)
+        if ((aSE == 3) || (aSE==5)) &&  (dflo >= age_cr) %%%%  (AgeLtm1 >= age_cr)   (PAR_Im<-PAR_th)
             PHE_S = 4;
         end
         if (Bfac_day <= Bfac_ls )  %(Bfac_ls == 100) &&  (Bfac_day <= 0.15 )
