@@ -25,14 +25,14 @@ function[PHE_S,dflo,AgeL,AgeDL]= PHENOLOGY_STATE(NLeaf,AgeLtm1,dtd,...
 %%% Minimum LAI to pass in Dormant Phenology
 %%% aSE  %%% PHENOLOGY KIND
 %%% -- 1 Seasonal Plant --  0 Evergreen  -- 2 Grass species -- 3 Tropical
-%%% Evergreen -- 4 NaN -- 5 Crops -- 
+%%% Evergreen -- 4 NaN -- 5 Crops -- 6 Mosses 
 %%% mjDay maximum julian day
 %%%%%% OUTPUT
 %%% dflo [day] from Leaf onset
 %%% AgeL [day] Average Age of Leaf
 %%% PHE_S [#] Phenology State
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-if (aSE == 0) || (aSE == 1) || (aSE == 2) || (aSE == 5) 
+if isnan(PAR_th)
     PAR_th = -Inf;
 end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -91,6 +91,9 @@ switch PHE_Stm1
             PHE_S = 3;
         end
         if ((aSE == 3) || (aSE==5)) &&  (dflo >= age_cr) %%%%  (AgeLtm1 >= age_cr)   (PAR_Im<-PAR_th)
+            PHE_S = 4;
+        end
+        if (aSE == 1) &&  (dflo >= age_cr) && (PAR_th>0)  %%  (PAR_Im<-PAR_th)
             PHE_S = 4;
         end
         if (Bfac_day <= Bfac_ls )  %(Bfac_ls == 100) &&  (Bfac_day <= 0.15 )

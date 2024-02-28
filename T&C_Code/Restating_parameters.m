@@ -165,7 +165,7 @@ end
 if not(exist('Urb_Par','var'))
     Urb_Par.alb= 0.15;
     Urb_Par.e_sur= 0.92;
-    Urb_Par.zom= 1;
+    Urb_Par.BuildH= 12;
 end
 %%%%%%%%%%
 %%%%% Vegetation High Parameters

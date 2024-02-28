@@ -25,7 +25,7 @@ zom_soil = 0.003; %% [m] bare soil roughness momentum
 zom_snow= 0.001; %% 0.001 %% [m] snow roughness momentum 
 zom_ice = 0.001*(Cice==1); %% [m] ice roughenss momentum 
 zom_wat = 0.0002*(Cwat == 1); %% %%0.0003 water  roughness momentum 
-zom_urb = Urb_Par.zom*(Curb > 0); %%% 0.3-2.5 [m] urban landscape roughness momentum 
+zom_urb = 0.123*Urb_Par.BuildH*(Curb > 0); %%% 0.3-2.5 [m] urban landscape roughness momentum 
 zom_rock = 0.0003*(Crock == 1); %% [m] rock roughness momentum 
 zom_debris = Deb_Par.zom*(Cdeb==1); %% [m] debris   roughness momentum 
 %zom = hc*(0.23 - LAI^0.25/10 - (y-1)/67);
@@ -36,6 +36,7 @@ zom_L =0.123*hc_L; %% vegetation roughness momentum [m] Brutsaert (1975)
 %d = hc*(0.05 + LAI^0.02/2 + (y-1)/20);
 d_L = 0.67*hc_L; 
 d_H = 0.67*hc_H;
+d_urban=0.67*(Urb_Par.BuildH)*(Curb); 
 %%%%%%%%%%%%%%%%%
 OPT_ROUGH = 0;
 if OPT_ROUGH == 2
@@ -90,6 +91,6 @@ zoh_other= 0.1*zom_other; %% roughness  eddy diffusivities for heat  [m]  ???? [
 zom= max(max(max(zom_H),max(zom_L)),zom_other); 
 zoh= max(max(max(zoh_H),max(zoh_L)),zoh_other);
 %%%%%%%%%%
-disp_h = max(max(max(d_H),max(d_L)));
+disp_h = max(max(max(d_H),max(d_L)),d_urban);
 return
 %%%%%%%%%%%%%%%%%

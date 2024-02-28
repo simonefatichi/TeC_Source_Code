@@ -202,8 +202,10 @@ if B(1) >= LtR*B(3) %%% Leaf-Root ratio
         fr = fr + (fl-fls);
         fl=0;
     else
-        fr = fr+ fl;
-        fl = 0;
+        if (aSE == 2) %%% Grass species 
+            fr = fr+ fl;
+            fl = 0;
+        end
     end
 end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -260,6 +262,9 @@ switch aSE
         end
         %%%%
         dla= dlaK*AgeL/((age_cr)^2); %% [1/d] Mortality for normal leaf age
+        if AgeL>age_cr
+            dla=max(0.25/age_cr,dla);
+        end
     case 5
         %dla= min(0.99,(1/age_cr)*(AgeL/age_cr).^4); %% [1/d] Mortality for crop
         dla=(1/age_cr)*(0.5*tanh(10*(AgeL/age_cr)-7)+0.5); %% [1/d] Mortality for crop

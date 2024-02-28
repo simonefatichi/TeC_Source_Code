@@ -44,6 +44,7 @@ switch OPT_PC
             %e_rel = 1.4876 + -0.0505*(AgeLm) + -1.0806*(fNL);
             %e_rel = 0.3158 + (NBL_Im^-0.2381)  -0.001494*(AgeL);
             e_rel(e_rel>1)=1; 
+            e_rel(e_rel<0.4)=0.4;
         end
         %%%%
         if  aSE == 5
@@ -75,4 +76,5 @@ switch OPT_PC
             end
         end
 end
+e_rel(e_rel<0)=0;
 end

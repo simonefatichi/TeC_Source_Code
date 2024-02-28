@@ -113,6 +113,9 @@ switch aSE
         end
         %%%%
         dla= dlaK*AgeL/((age_cr)^2); %% [1/d] Mortality for normal leaf age
+        if AgeL>age_cr
+            dla=max(0.25/age_cr,dla);
+        end 
     case 5
         dla= min(1/age_cr,AgeL/((age_cr)^2)); %% [1/d] Mortality as in grass
 end
