@@ -117,7 +117,8 @@ switch aSE
             dla=max(0.25/age_cr,dla);
         end 
     case 5
-        dla= min(1/age_cr,AgeL/((age_cr)^2)); %% [1/d] Mortality as in grass
+        %dla= min(1/age_cr,AgeL/((age_cr)^2)); %% [1/d] Mortality as in grass
+        dla=(1/age_cr)*(0.5*tanh(10*(AgeL/age_cr)-7)+0.5); %% [1/d] Mortality for crop
 end
 %%%%%%
 %%% Leaf Mortality to Cold Stress  Linear [Cox 2001]

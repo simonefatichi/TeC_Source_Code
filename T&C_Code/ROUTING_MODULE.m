@@ -2,7 +2,7 @@
 %   Subfunction  ROUTING_MODULE             %
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 function[q_runon,q_channel_out,Qi_in,Slo_pot,Q_exit,Qsub_exit,T_pot,...
-    QpointH,QpointC,UpointH,UpointC,Utot_H,Utot_C]= ROUTING_MODULE(dt,dth,Rd,Rh,Qi_out,q_channel_in,...
+    QpointH,QpointC,UpointH,UpointC,Q_ch_added,Utot_H,Utot_C]= ROUTING_MODULE(dt,dth,Rd,Rh,Qi_out,q_channel_in,...
     cellsize,Area,DTM,NMAN_H,NMAN_C,MRough,WC,SN,T_flow,T_potI,Slo_top,ms_max,POT,ZWT,OPT_HEAD,Xout,Yout)
 %%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%% OUTPUT
@@ -114,6 +114,7 @@ q_runon = Qsur;
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%% CHANNEL FLOW ROUTING
 q_channel = q_channel_in + Qi_seep + Qi_fall; %%% [mm]
+Q_ch_added = Qi_seep + Qi_fall; %% [mm]
 dti= 2; %%[s] Internal Time step for Surface Routing
 cdti = 0;
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

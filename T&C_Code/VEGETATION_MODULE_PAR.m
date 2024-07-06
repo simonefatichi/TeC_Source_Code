@@ -179,7 +179,7 @@ for cc=1:length(Ccrown)
         %%%%%%%%%%%%%%%%%%%%%% Change in height SAI and Ccrown
         SAI_H(cc) =SAI_Htm1(cc);
         %%%%
-        if aSE_H(cc) == 2
+        if aSE_H(cc) == 2 && Ccrown(cc)>0
             [hc_H(cc)] = GrassHeight(LAI_H(cc),LAIdead_H(cc));
         else
             hc_H(cc)= hc_Htm1(cc); %%%[m]
@@ -232,7 +232,7 @@ for cc=1:length(Ccrown)
         %%%%%%%%%%%%%%%%%%%%%% Change in height SAI and Ccrown
         SAI_L(cc) =SAI_Ltm1(cc);
         %%%%
-        if aSE_L(cc) == 2
+        if aSE_L(cc) == 2 && Ccrown(cc)>0
             [hc_L(cc)] = GrassHeight(LAI_L(cc),LAIdead_L(cc));
         else
             hc_L(cc)= hc_Ltm1(cc); %%%[m]

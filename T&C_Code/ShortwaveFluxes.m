@@ -157,6 +157,10 @@ if  (h_S > 0) && ((Rsw.dir_vis + Rsw.dif_vis+Rsw.dir_nir + Rsw.dif_nir)>0)
     if sum(LAI_H+SAI_H+LAId_H) > 0
         Rup_vis_veg = sum(Ccrown.*Rrfl_vis_vegH);
         Rup_nir_veg = sum(Ccrown.*Rrfl_nir_vegH);
+        if sum(LAI_L+SAI_L+LAId_L) > 0  && (Csno == 0)
+            Rup_vis_veg = Rup_vis_veg + sum(Ccrown.*Rrfl_vis_vegL);
+            Rup_nir_veg = Rup_nir_veg + sum(Ccrown.*Rrfl_nir_vegL);
+        end
     else
         if sum(LAI_L+SAI_L+LAId_L) > 0  && (Csno == 0)
             Rup_vis_veg = sum(Ccrown.*Rrfl_vis_vegL);
@@ -166,8 +170,8 @@ if  (h_S > 0) && ((Rsw.dir_vis + Rsw.dif_vis+Rsw.dir_nir + Rsw.dif_nir)>0)
             Rup_nir_veg = 0;
         end
     end
-    rvis= (Rup_vis+ sum(Ccrown)*Rup_vis_veg)/(Rsw.dir_vis + Rsw.dif_vis);
-    rnir= (Rup_nir+ sum(Ccrown)*Rup_nir_veg)/(Rsw.dir_nir + Rsw.dif_nir);
+    rvis= (Rup_vis+ Rup_vis_veg)/(Rsw.dir_vis + Rsw.dif_vis);
+    rnir= (Rup_nir+ Rup_nir_veg)/(Rsw.dir_nir + Rsw.dif_nir);
     NDVI=(rnir-rvis)/(rnir+rvis);
     ALB = rvis*(Rsw.dir_vis + Rsw.dif_vis)/(Rsw.dir_vis + Rsw.dif_vis+Rsw.dir_nir + Rsw.dif_nir) + rnir*(Rsw.dir_nir + Rsw.dif_nir)/(Rsw.dir_vis + Rsw.dif_vis+Rsw.dir_nir + Rsw.dif_nir);
 else

@@ -78,39 +78,39 @@ for i=1:length(Ccrown)
         d_leaf_DW =d_leaf_H(i);
         OPT_VEG = 1;
     else
-        if disp_h_L(i) > 0 && disp_h_L(i) < d
-            %%% Low Veg below Low or High Veg
-            [hc11,pi1] = max(hc_H); %%% height vegetation above
-            [hc12,pi2] = max(hc_L); %%% height vegetation above
-            [hc,pi3] = max([hc11,hc12]);
-            if pi3==1
-                LAI_UP = LAI_H(pi1); %% LAI vegetation above
-                d_leaf_UP =d_leaf_H(pi1);
-                hc = max([max(hc_H),d+zom+0.01,0.05]); %%% height vegetation above
-            else
-                LAI_UP = LAI_L(pi2); %% LAI vegetation above
-                d_leaf_UP =d_leaf_L(pi2);
-                hc = max([max(hc_L),d+zom+0.01,0.05]); %%% height vegetation above
-            end
+        %%%% High and Low vegetation stucked --
+        if  (hc_L(i) >0) && (hc_H(i)>0)
+            OPT_VEG = 3;
+            %%%%%%%%%
+            hc = max([max(hc_H),d+zom+0.01,0.05]); %%% height vegetation above
             d2 = disp_h_L(i) ;
             zom2  = zom_L(i);
             hc2 =max([hc_L(i),d2+zom2+0.01,0.05]);
+            LAI_UP = LAI_H(i); %% LAI vegetation above
             LAI_DW = LAI_L(i) ;
+            d_leaf_UP =d_leaf_H(i);
             d_leaf_DW =d_leaf_L(i);
-            OPT_VEG = 2;
         else
-            %%%% High and Low vegetation stucked --
-            if  (hc_L(i) >0) && (hc_H(i)>0)
-                OPT_VEG = 3;
-                %%%%%%%%%
-                hc = max([max(hc_H),d+zom+0.01,0.05]); %%% height vegetation above
+            if disp_h_L(i) > 0 && disp_h_L(i) < d
+                %%% Low Veg below Low or High Veg
+                [hc11,pi1] = max(hc_H); %%% height vegetation above
+                [hc12,pi2] = max(hc_L); %%% height vegetation above
+                [hc,pi3] = max([hc11,hc12]);
+                if pi3==1
+                    LAI_UP = LAI_H(pi1); %% LAI vegetation above
+                    d_leaf_UP =d_leaf_H(pi1);
+                    hc = max([max(hc_H),d+zom+0.01,0.05]); %%% height vegetation above
+                else
+                    LAI_UP = LAI_L(pi2); %% LAI vegetation above
+                    d_leaf_UP =d_leaf_L(pi2);
+                    hc = max([max(hc_L),d+zom+0.01,0.05]); %%% height vegetation above
+                end
                 d2 = disp_h_L(i) ;
                 zom2  = zom_L(i);
                 hc2 =max([hc_L(i),d2+zom2+0.01,0.05]);
-                LAI_UP = LAI_H(i); %% LAI vegetation above
                 LAI_DW = LAI_L(i) ;
-                d_leaf_UP =d_leaf_H(i);
                 d_leaf_DW =d_leaf_L(i);
+                OPT_VEG = 2;
             else
                 if  (hc_L(i) == 0) && (hc_H(i) == 0)
                     %%% No Vegetation
