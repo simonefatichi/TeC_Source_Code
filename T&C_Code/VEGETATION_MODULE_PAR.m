@@ -30,8 +30,8 @@ function[LAI_H,B_H,NPP_H,ANPP_H,Rg_H,RA_H,Rms_H,Rmr_H,Rmc_H,PHE_S_H,...
     fab_L,fbe_L,ParEx_L,Mpar_L,TBio_L,SAI_Ltm1,hc_Ltm1,...
     ExEM,Lmax_day,L_day,Se_bio,Tdp_bio,OPT_EnvLimitGrowth,OPT_VD,OPT_VCA,OPT_ALLOME,OPT_SoilBiogeochemistry)
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%%%% %% To be adjusted 
-dtd=1; %% day 
+%%%% %% To be adjusted
+dtd=1; %% day
 Ccrown_t = Ccrown_t_tm1;
 
 %%%%%% VEGETATION MODULE
@@ -158,7 +158,7 @@ BA_L=zeros(1,cc_max); Tden_L=zeros(1,cc_max); AgePl_L=zeros(1,cc_max); TBio_Lt=z
 for cc=1:length(Ccrown)
     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
     if ZR_H(cc) > 0
-        %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%   
+        %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
         [LAI_H(cc),B_H(cc,:),NPP_H(cc),ANPP_H(cc),Rg_H(cc),RA_H(cc),Rms_H(cc),Rmr_H(cc),Rmc_H(cc),PHE_S_H(cc),...
             dflo_H(cc),AgeL_H(cc),e_rel_H(cc),e_relN_H(cc),LAIdead_H(cc),NBLeaf_H(cc),Sr_H(cc),Slf_H(cc),Sfr_H(cc),Swm_H(cc),Sll_H(cc),Rexmy_H(cc,:),Rrootl_H(cc),...
             AgeDL_H(cc),Bfac_dayH(cc),Bfac_weekH(cc),NPPI_H(cc),TdpI_H(cc),NupI_H(cc,:),PARI_H(cc,:),NBLI_H(cc),RB_H(cc,:),FNC_H(cc),Nreserve_H(cc),Preserve_H(cc),Kreserve_H(cc),...
@@ -168,7 +168,7 @@ for cc=1:length(Ccrown)
             L_day,Lmax_day,VegH_Param_Dyn,cc,...
             Nreserve_Htm1(cc),Preserve_Htm1(cc),Kreserve_Htm1(cc),Nuptake_H(cc),Puptake_H(cc),Kuptake_H(cc),FNC_Htm1(cc),Se_bio,Tdp_bio,...
             ParEx_H(cc),ExEM,Bam,Bem,Mpar_H(cc),TBio_H(cc),OPT_EnvLimitGrowth,OPT_VCA,OPT_VD,OPT_SoilBiogeochemistry);
-  
+
         %%%%%%%%%%%%%%%%%%
         %%%%%%%%%%%%%%%%%%
         [TexC_H(cc),TexN_H(cc),TexP_H(cc),TexK_H(cc),TNIT_H(cc),TPHO_H(cc),TPOT_H(cc),NuLit_H(cc,:),Nreserve_H(cc),Preserve_H(cc),Kreserve_H(cc),...
@@ -179,8 +179,14 @@ for cc=1:length(Ccrown)
         %%%%%%%%%%%%%%%%%%%%%% Change in height SAI and Ccrown
         SAI_H(cc) =SAI_Htm1(cc);
         %%%%
-        if aSE_H(cc) == 2 && Ccrown(cc)>0
+        if aSE_H(cc) == 2
             [hc_H(cc)] = GrassHeight(LAI_H(cc),LAIdead_H(cc));
+
+        elseif aSE_H(cc) == 5
+
+            [hc_H(cc),SAI_H(cc),B_H(:,:),~,Nreserve_H(cc),Preserve_H(cc),Kreserve_H(cc),AgrHarNut(:)] = CropHeightType(LAI_H(cc),LAIdead_H(cc),cc,B_H(:,:),...
+                Ccrown,Nreserve_H(cc),Preserve_H(cc),Kreserve_H(cc),ManIH,Mpar_H,VegH_Param_Dyn,OPT_SoilBiogeochemistry);
+
         else
             hc_H(cc)= hc_Htm1(cc); %%%[m]
             if OPT_VCA == 1
@@ -196,7 +202,7 @@ for cc=1:length(Ccrown)
                 Kreserve_H(cc)=Kreserve_H(cc)*Ccrown_t_tm1(cc)/Ccrown_t(cc);
             end
         end
-        
+
     else
         LAI_H(cc)=0;B_H(cc,:)=0;NPP_H(cc)=0;ANPP_H(cc)=0;Rg_H(cc)=0;RA_H(cc)=0;Rms_H(cc)=0;
         Rmr_H(cc)=0;PHE_S_H(cc)=0;dflo_H(cc)=0;AgeL_H(cc)=0;e_rel_H(cc)=0; e_relN_H(cc)=0;
@@ -232,8 +238,13 @@ for cc=1:length(Ccrown)
         %%%%%%%%%%%%%%%%%%%%%% Change in height SAI and Ccrown
         SAI_L(cc) =SAI_Ltm1(cc);
         %%%%
-        if aSE_L(cc) == 2 && Ccrown(cc)>0
+        if aSE_L(cc) == 2
             [hc_L(cc)] = GrassHeight(LAI_L(cc),LAIdead_L(cc));
+        elseif aSE_L(cc) == 5
+
+            [hc_L(cc),SAI_L(cc),B_L(:,:),~,Nreserve_L(cc),Preserve_L(cc),Kreserve_L(cc),AgrHarNut(:)] = CropHeightType(LAI_L(cc),LAIdead_L(cc),cc,B_L(:,:),...
+                Ccrown,Nreserve_L(cc),Preserve_L(cc),Kreserve_L(cc),ManIL,Mpar_L,VegL_Param_Dyn,OPT_SoilBiogeochemistry);
+
         else
             hc_L(cc)= hc_Ltm1(cc); %%%[m]
             if OPT_VCA == 1
@@ -249,7 +260,7 @@ for cc=1:length(Ccrown)
                 Kreserve_L(cc)=Kreserve_L(cc)*Ccrown_t_tm1(cc)/Ccrown_t(cc);
             end
         end
-        
+
     else
         LAI_L(cc)=0;B_L(cc,:)=0;NPP_L(cc)=0;ANPP_L(cc)=0;Rg_L(cc)=0;RA_L(cc)=0;Rms_L(cc)=0;
         Rmr_L(cc)=0;PHE_S_L(cc)=0;dflo_L(cc)=0;AgeL_L(cc)=0;e_rel_L(cc)=0;e_relN_L(cc)=0;
