@@ -33,6 +33,7 @@ function[LAI_H,B_H,NPP_H,ANPP_H,Rg_H,RA_H,Rms_H,Rmr_H,Rmc_H,PHE_S_H,...
 %%%% %% To be adjusted
 dtd=1; %% day
 Ccrown_t = Ccrown_t_tm1;
+%%% currently not working from crop rotations Ccrown fixed on the external parameter file
 
 %%%%%% VEGETATION MODULE
 hc_Htm1 =squeeze(hc_Htm1);

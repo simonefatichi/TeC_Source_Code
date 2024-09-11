@@ -32,7 +32,7 @@ function[PHE_S,dflo,AgeL,AgeDL]= PHENOLOGY_STATE(NLeaf,AgeLtm1,dtd,...
 %%% AgeL [day] Average Age of Leaf
 %%% PHE_S [#] Phenology State
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-if isnan(PAR_th)
+if isnan(PAR_th) || isinf(PAR_th)
     PAR_th = -Inf;
 end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

@@ -384,12 +384,14 @@ if NPP > 0
 else
     %%% dB [gC/m^2 d]
     if (fl*(GPP-Rg) <  1.0368*Rdark) && ((PHE_S == 2) ||  (PHE_S == 3))
-        fl = 1 ;
-        fs = 0; fr = 0; fc = 0; ff = 0;
-        %%%%%%%%%
+        %%%%
         Tr_l = 1.0368*Rdark - fl*(GPP-Rg);
         Tr_l = min(Tr_l,B(4));
         Tr = Tr_l ;
+        %%%%%
+        %fl = 1 ;
+        %fs = 0; fr = 0; fc = 0; ff = 0;
+        %%%%%%%%%
     end
     %if fr*(GPP-Rg) < Rmr && ((PHE_S == 2) ||  (PHE_S == 3))
     %    Tr_r = Rmr - fr*(GPP-Rg); 
