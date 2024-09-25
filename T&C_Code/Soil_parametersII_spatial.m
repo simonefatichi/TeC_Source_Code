@@ -59,4 +59,5 @@ end
 %Oss=O(1); Owp=O(2); Ohy=O(3);
 %%%%%%%%%%%%%%%%%%%%%%%
 Ofc= Osat.*(Kfc./Ks).^(1./(3+(2./L)));
+Ofc(Ofc>Osat)=Osat((Ofc>Osat)); 
 return

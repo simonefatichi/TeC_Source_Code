@@ -4,7 +4,7 @@
 function[LAI,B,NPP,ANPP,Rg,RA,Rms,Rmr,Rmc,PHE_S,dflo,AgeL,e_rel,e_relN,LAIdead,NBLeaf,Sr,Slf,Sfr,Swm,Sll,...
     Rexmy,Rootl,AgeDL,Bfac_day,Bfac_week,NPPm,Tsmm,NupIm,PAR_Im,NBL_Im,RB,FNC,Nreserve,Preserve,Kreserve,rNc,rPc,rKc,ManI]= VEGGIE_UNIT(Btm1,PHE_Stm1,dflotm1,AgeLtm1,AgeDLtm1,...
     Ta,Tdp,PAR,Psi_x,Psi_l,An,Rdark,NPPtm1,jDay,Datam,NPPI,TdpI,Bfac_weekI,NupI,NavlI,PAR_I,NBL_I,NBLeaftm1,....
-    L_day,Lmax_day,Veg_Param_Dyn,cc,...
+    Lat,Veg_Param_Dyn,cc,...
     Nreservetm1,Preservetm1,Kreservetm1,Nuptake,Puptake,Kuptake,FNCtm1,Se_bio,Tdp_bio,...
     ParEx,EM,Bam,Bem,Mpar,TBio,OPT_EnvLimitGrowth,OPT_VCA,OPT_VD,OPT_SoilBiogeochemistry)
 
@@ -152,6 +152,8 @@ if OPT_EnvLimitGrowth == 1
 else
     GF=Inf; %% [gC /m2 day]
 end
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+L_day = 360/(15*pi)*acos(-tan(23.45*pi/180*cos(2*pi/365*(172 - jDay)))*tan(Lat*pi/180)); %% [h] length of the day 
 %%%%%%%%%%%%%%%%%%%%%
 [FNC,e_relN,rNc,rPc,rKc,rMc,rNcR,Navailtm1,Pavailtm1,Kavailtm1]= Nutrients_Available(Btm1,FNCtm1,Stoich,Nreservetm1,Preservetm1,Kreservetm1,OPT_SoilBiogeochemistry);
 %%%%%%%%%%%%%%%%%%%%%%
@@ -177,7 +179,7 @@ B(8)=0; %% Re-initialize B(8)
     LAIdead,NLeafdead,AgeDLtm1,...
     PHE_Stm1,LAI,aSE,age_cr,jDay,Tsmm,Bfac_day,Bfac_week,NPPm,PAR_Im(3),L_day,Bfac_lo,Bfac_ls,Tlo,Tls,mjDay,LDay_min,LDay_cr,dflotm1,dmg,PAR_th,LAI_min,jDay_cut,LAI_cut);
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-[e_rel]= RELATIVE_PC(AgeL,dflo,NBL_Im,B(1),age_cr,aSE,L_day,Lmax_day,jDay);
+[e_rel]= RELATIVE_PC(AgeL,dflo,NBL_Im,B(1),age_cr,aSE,L_day,Lat,jDay);
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 RB(1:7)=0; %% Removed Live Leaves/ Sapwood/ Fine Roots /Carbohydrate Reserve /Fruit and Flower /Heartwood - Dead Sapwood /Standing Dead Leaves
 %%%%%%%%%% Grass Cut and Grazing

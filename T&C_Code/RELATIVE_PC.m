@@ -1,8 +1,15 @@
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %   Subfunction  RELATIVE PHOTOSYNTETIC CAPACITY %
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-function[e_rel]= RELATIVE_PC(AgeL,dflo,NBL_Im,BLeaf,age_cr,aSE,L_day,Lmax_day,jDay)
+function[e_rel]= RELATIVE_PC(AgeL,dflo,NBL_Im,BLeaf,age_cr,aSE,L_day,Lat,jDay)
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+Lat_rad = Lat*pi/180;
+if Lat>0
+    Lmax_day = 360/(15*pi)*acos(-tan(23.45*pi/180)*tan(Lat_rad));
+else
+    Lmax_day = 360/(15*pi)*acos(-tan(23.45*pi/180*(-1))*tan(Lat_rad));
+end
+%%%%%%%%%%%%%%%%%%
 OPT_PC=6;
 switch OPT_PC
     case 0

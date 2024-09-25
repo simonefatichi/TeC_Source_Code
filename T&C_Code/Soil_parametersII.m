@@ -61,6 +61,9 @@ switch SPAR
             end
             %%%%%%%%%%%%%%%%%%%%%%%
             Ofc(1,i)= Osat(i)*(Kfc/Ks(i))^(1/(3+(2/L(i))));
+            if Ofc(1,i)>Osat(i)
+                Ofc(1,i)=Osat(i);
+            end
         end
 end 
 return 
