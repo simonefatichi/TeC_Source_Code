@@ -1426,3 +1426,30 @@ if not(isempty(RES_ID_List))
         end
     end
 end
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%% TRACKING PIXEL ONLY DISCHARGE
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% for ipoC=1:npoint
+%     ij = sub2ind(size(DTM),Yout(ipoC),Xout(ipoC));
+%     if t==2
+%         tit9{1,ipoC}=strcat('OUTPUT_',TITLE_SAVE,'_PIXEL_Q_',num2str(ij),'.dat');
+%         fid9(1,ipoC)=fopen(tit9{1,ipoC},'a');
+%     end
+%     fprintf(fid9(1,ipoC),'%g\t',Pr_S(ij));%1
+%     fprintf(fid9(1,ipoC),'%g\t',Ta_S(ij));%2
+%     fprintf(fid9(1,ipoC),'%g\t',q_runon(ij));%3
+%     fprintf(fid9(1,ipoC),'%g\t',Q_channel(ij));%4
+%     fprintf(fid9(1,ipoC),'%g\t',QpointH(ipoC));%5
+%     fprintf(fid9(1,ipoC),'%g\t',QpointC(ipoC));%%6
+%     fprintf(fid9(1,ipoC),'%g\t',UpointH(ipoC));%7
+%     fprintf(fid9(1,ipoC),'%g\t',UpointC(ipoC));%8
+%     %%%
+%     fprintf(fid9(1,ipoC),'%g\t\n',t);%%9
+%  
+%     if t==N_time_step
+%         fclose(fid9(1,ipoC));
+%     end
+% end 

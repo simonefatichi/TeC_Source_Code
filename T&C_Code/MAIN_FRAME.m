@@ -369,7 +369,7 @@ for i=2:NN
                     [hc_H(j,cc)] = GrassHeight(LAI_H(j,cc),LAIdead_H(j,cc));
                 elseif aSE_H(cc) == 5
                     [hc_H(j,cc),SAI_H(j,cc),B_H(j,:,:),Ccrown,Nreserve_H(j-1:j,:),Preserve_H(j-1:j,:),Kreserve_H(j-1:j,:),AgrHarNut(j,:)] = CropHeightType(LAI_H(j,cc),LAIdead_H(j,cc),cc,B_H(j,:,:),...
-                        Ccrown,Nreserve_H(j,:),Preserve_H(j,:),Kreserve_H(j,:),ManIH,Mpar_H,VegH_Param_Dyn,OPT_SoilBiogeochemistry);
+                        Ccrown,Nreserve_H(j,:),Preserve_H(j,:),Kreserve_H(j,:),Stoich_H(cc),ManIH,Mpar_H,VegH_Param_Dyn,OPT_SoilBiogeochemistry);
                     %%%%
                 else
                     hc_H(j,cc)= hc_H(j-1,cc); %%%[m]
@@ -428,7 +428,7 @@ for i=2:NN
                     [hc_L(j,cc)] = GrassHeight(LAI_L(j,cc),LAIdead_L(j,cc));
                 elseif aSE_L(cc) == 5
                     [hc_L(j,cc),SAI_L(j,cc),B_L(j,:,:),Ccrown,Nreserve_L(j,:),Preserve_L(j,:),Kreserve_L(j,:),AgrHarNut(j,:)] = CropHeightType(LAI_L(j,cc),LAIdead_L(j,cc),cc,B_L(j,:,:),...
-                        Ccrown,Nreserve_L(j,:),Preserve_L(j,:),Kreserve_L(j,:),ManIL,Mpar_L,VegL_Param_Dyn,OPT_SoilBiogeochemistry);
+                        Ccrown,Nreserve_L(j,:),Preserve_L(j,:),Kreserve_L(j,:),Stoich_L(cc),ManIL,Mpar_L,VegL_Param_Dyn,OPT_SoilBiogeochemistry);
                 else
                     hc_L(j,cc)= hc_L(j-1,cc); %%%[m]
                     if OPT_VCA == 1

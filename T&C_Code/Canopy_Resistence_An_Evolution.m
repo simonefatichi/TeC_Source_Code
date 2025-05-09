@@ -99,8 +99,19 @@ if Fsun > 0
     %[Ci_sun]=fzero(@CO2_Concentration,Citm1_sun,Opt_CR,PAR_sun,Ca,ra,rb_sun,Ts,Ta,Pre,Ds,...
     %    O,Owp,Oss,CT,Vmax_sun,Tup,Tlow,DS,Ha,FI,Oa,Do,a1,go_sun);
     %%%
-    [Ci_sun]=fzero(@CO2_Concentration,Citm1_sun,Opt_CR,PAR_sun,Ca,ra,rb_sun,Ts,Pre,Ds,...
+    [Ci_sun,~,exitflag]=fzero(@CO2_Concentration,Citm1_sun,Opt_CR,PAR_sun,Ca,ra,rb_sun,Ts,Pre,Ds,...
         Psi_L,Psi_sto_50,Psi_sto_99,CT,Vmax_sun,DS,Ha,FI,Oa,Do,a1,go_sun,gmes_sun,rjv);
+
+    if exitflag<1
+        [Ci_sun,~,exitflag]=fzero(@CO2_Concentration,[Ca],Opt_CR,PAR_sun,Ca,ra,rb_sun,Ts,Pre,Ds,...
+            Psi_L,Psi_sto_50,Psi_sto_99,CT,Vmax_sun,DS,Ha,FI,Oa,Do,a1,go_sun,gmes_sun,rjv);
+    end
+    if exitflag<1
+        disp("ERROR IN THE CO2 SOLVER")
+        Ci_sun = Ca;
+    end
+
+    
     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
     %[CiF_sun,An_sun,rc_sun,Rdark_sun]= PHOTOSYNTESIS(Ci_sun,PAR_sun,Ca,ra,rb_sun,Ts,Ta,Pre,Ds,...
     %    O,Owp,Oss,...
@@ -119,8 +130,18 @@ if Fshd > 0
     %[Ci_shd]=fzero(@CO2_Concentration,Citm1_shd,Opt_CR,PAR_shd,Ca,ra,rb_shd,Ts,Ta,Pre,Ds,...
     %    O,Owp,Oss,CT,Vmax_shd,Tup,Tlow,DS,Ha,FI,Oa,Do,a1,go_shd);
     %%%%
-    [Ci_shd]=fzero(@CO2_Concentration,Citm1_shd,Opt_CR,PAR_shd,Ca,ra,rb_shd,Ts,Pre,Ds,...
+    [Ci_shd,~,exitflag]=fzero(@CO2_Concentration,Citm1_shd,Opt_CR,PAR_shd,Ca,ra,rb_shd,Ts,Pre,Ds,...
         Psi_L,Psi_sto_50,Psi_sto_99,CT,Vmax_shd,DS,Ha,FI,Oa,Do,a1,go_shd,gmes_shd,rjv);
+
+    if exitflag<1
+        [Ci_shd,~,exitflag]=fzero(@CO2_Concentration,[Ca],Opt_CR,PAR_shd,Ca,ra,rb_shd,Ts,Pre,Ds,...
+            Psi_L,Psi_sto_50,Psi_sto_99,CT,Vmax_shd,DS,Ha,FI,Oa,Do,a1,go_shd,gmes_shd,rjv);
+    end
+    if exitflag<1
+        disp("ERROR IN THE CO2 SOLVER")
+        Ci_shd = Ca;
+    end
+
     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
     %[CiF_shd,An_shd,rc_shd,Rdark_shd]= PHOTOSYNTESIS(Ci_shd,PAR_shd,Ca,ra,rb_shd,Ts,Ta,Pre,Ds,...
     %    O,Owp,Oss,...

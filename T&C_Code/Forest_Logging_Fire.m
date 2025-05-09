@@ -14,7 +14,7 @@ fract_resprout=Mpar.fract_resprout; %% fraction resrpout or surviving belowgroun
 FsR = 0.5;%%% Fraction of seed bank for Fine roots 
 FsC = 0.5;%%% Fraction of seed bank for Reserves 
 %%%% INPUT
-ManI=0; %%% Management Indicator (0) Nothing (1) Fire (-1) Logging 
+ManI=0; %%% Management Indicator (0) Nothing  ,, (-5) Fire (-1)  Logging 
 Btm1=B;
 if fract_log > 0
     %%%%%%%%%% Logging

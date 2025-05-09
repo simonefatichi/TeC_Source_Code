@@ -189,7 +189,7 @@ PreserveM=Preserve + VarResP;
 KreserveM=Kreserve + VarResK;
 if OPT_SB == 1 %%% Only with soil-biogeochemistry on - otherwise reserves are depleted
     switch ManI
-        case 1  %%% Fire
+        case -5  %%% Fire
             AddN = AddN+ fire_eff*fab*NreserveM/dtd;
             AddP = AddP+ fire_eff*fab*PreserveM/dtd;
             AddK = AddK+ fire_eff*fab*KreserveM/dtd;
@@ -214,7 +214,7 @@ end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%% Fire_effect on C 
-if ManI == 1 
+if ManI == -5 
     fract_left =0*fire_eff + (1-fire_eff)*fract_left; %%
     fract_left_fr =0*fire_eff + (1-fire_eff)*fract_left_fr; %% 
     fract_left_harAB =0*fire_eff +  (1-fire_eff)*fract_left_harAB; %% 
@@ -247,7 +247,7 @@ IS_C_met_ssr_lit2 =  frac_to_metabolic_r*fract_left_harBG*RB(3) + (frac_to_metab
 IS_C_str_ssr_lit_lig2 = (1-frac_to_metabolic_r)*fract_left_harBG*RB(3)*Lig_fr_r + (1-frac_to_metabolic_h)*fbe*fract_left_harBG*(RB(2)+RB(4)+RB(6))*Lig_fr_h;
 IS_C_str_ssr_lit_nlig2 = (1-frac_to_metabolic_r)*fract_left_harBG*RB(3)*(1-Lig_fr_r) + (1-frac_to_metabolic_h)*fbe*fract_left_harBG*(RB(2)+RB(4)+RB(6))*(1-Lig_fr_h);
 %%%%%% Fire_effect on N
-if  ManI == 1  %% Hyp. %  a fraction of N left in the field
+if  ManI == -5  %% Hyp. %  a fraction of N left in the field
     fract_left =Mpar.fract_left; %% Fraction_left of leaves  and dead leaves
     fract_left_fr =Mpar.fract_left_fr; %% Fraction left of fruits
     fract_left_harAB =Mpar.fract_left_AB; %% Fraction left of harvested wood aboveground
@@ -269,7 +269,7 @@ IS_N_wod_lit2 =  fract_left_harAB*fab*(RB(2)/Ns + RB(4)/Ni + RB(6)/Nh) ;
 IS_N_ssr_lit2 =  rNc*fract_left_harBG*RB(3)/Nr + fract_left_harBG*fbe*(RB(2)/Ns+ RB(4)/Ni +RB(6)/Nh) +fbe*AddN;  % [gN/m^2 day]
 %%%
 %%%%%% Fire_effect on P and K 
-if ManI == 1
+if ManI == -5
     fract_left =Mpar.fract_left; %% Fraction_left of leaves  and dead leaves
     fract_left_fr =Mpar.fract_left_fr; %% Fraction left of fruits
     fract_left_harAB =Mpar.fract_left_AB; %% Fraction left of harvested wood aboveground

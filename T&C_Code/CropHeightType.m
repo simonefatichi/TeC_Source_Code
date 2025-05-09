@@ -2,7 +2,7 @@
 %   Subfunction Crop Height and type     %
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 function [hc,SAI,B,Ccrown,Nreserve,Preserve,Kreserve,AgrHarNut] = CropHeightType(LAI,LAIdead,cc,B,Ccrown,...
-    Nreserve,Preserve,Kreserve,ManI,Mpar,Veg_Param_Dyn,OPT_SoilBiogeochemistry)
+    Nreserve,Preserve,Kreserve,Stoich,ManI,Mpar,Veg_Param_Dyn,OPT_SoilBiogeochemistry)
 %%%%
 if numel(size(B)) == 3
     BRoot=B(:,cc,3);
@@ -26,7 +26,7 @@ SAI=max(0.15*LAI,0.001);
 %%%%%%%%%%%%%%%%%
 AgrHarNut=[0 0 0];
 if  ManI(cc)>0 %% Sowing
-    
+
     Ccrown(cc)=Mpar(cc).Crop_crown(ManI(cc));
 
     if Ccrown(cc)==0
@@ -36,8 +36,22 @@ if  ManI(cc)>0 %% Sowing
             B(cc,:)=zeros(1,8);
         end
     end
-    
-elseif ManI(cc) == -2 %%%%% Harvest
+
+    %%% Adding enough Nutrients in the seeds to flush leaves 
+    if OPT_SoilBiogeochemistry==1
+        if numel(size(B)) == 3
+            Nreserve(1,cc)= B(:,cc,3)*(1/Stoich.Nl-1/Stoich.Nr)  +  B(:,cc,4)*(1/Stoich.Nl-1/Stoich.Nh);
+            Preserve(1,cc)= B(:,cc,3)*(1/Stoich.Phol-1/Stoich.Phor)  +  B(:,cc,4)*(1/Stoich.Phol-1/Stoich.Phoh);
+            Kreserve(1,cc)= B(:,cc,3)*(1/Stoich.Kpotl-1/Stoich.Kpotr)  +  B(:,cc,4)*(1/Stoich.Kpotl-1/Stoich.Kpoth);
+        else
+            Nreserve(1,cc)= B(cc,3)*(1/Stoich.Nl-1/Stoich.Nr)  +  B(cc,4)*(1/Stoich.Nl-1/Stoich.Nh);
+            Preserve(1,cc)= B(cc,3)*(1/Stoich.Phol-1/Stoich.Phor)  +  B(cc,4)*(1/Stoich.Phol-1/Stoich.Phoh);
+            Kreserve(1,cc)= B(cc,3)*(1/Stoich.Kpotl-1/Stoich.Kpotr)  +  B(cc,4)*(1/Stoich.Kpotl-1/Stoich.Kpoth);
+        end
+        AgrHarNut=-[Nreserve(1,cc) Preserve(1,cc) Kreserve(1,cc)];
+    end
+
+elseif ManI(cc) == -3 %%%%% One day after Harvest
     if OPT_SoilBiogeochemistry==1
         AgrHarNut=[Nreserve(1,cc) Preserve(1,cc) Kreserve(1,cc)];
         Nreserve(1,cc)=0;

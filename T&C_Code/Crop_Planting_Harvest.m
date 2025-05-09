@@ -9,7 +9,7 @@ Date_harvesting=Mpar.Date_harvesting;
 Crop_B= Mpar.Crop_B; 
 %%%%%
 %%%% INPUT
-ManI=0; %%% Management Indicator (-2) Planting or Harvesting 
+ManI=0; %%% Management Indicator Planting (1 to Inf) or Harvesting (-2) or OneDay after Harvesting (-3) 
 Btm1=B;
 %%%%%%%%%% Planting
 if  sum(abs(DD-Date_sowing)<=0.49)>=1
@@ -30,6 +30,10 @@ if  sum(abs(DD-Date_harvesting)<=0.49)>=1
     B(B<0)=0;
     %%%%
     LAI=0; LAIdead=0;
+end
+%%%%%%%%%% One day after Harvesting 
+if  sum(abs(DD-(Date_harvesting+1))<=0.49)>=1
+    ManI=-3;
 end
 %%%%%%%%%%%
 %if ManI~=0
