@@ -1,0 +1,11 @@
+function COEFF = Radiation_Partition_Coeff_Zurich()
+%%% Fitted on Zurich Fluntern 1981-2004, validated on 2005-2012:
+%%% aggregate RMSE over the six radiation variables falls 48.9 per cent
+%%% against Erbs (1982) with a fixed 0.45 visible fraction.
+COEFF.hour_offset = 1.0;
+COEFF.f_diff   = [3.275118972; -6.912608627; -0.2654673484; 0.06683230566; 1.929632878; -0.5885604599; 0.9785232888];
+COEFF.fvis_dir = [-0.9482526966; 0.4671717489; -0.4055315348; -0.07804378351; 0.1151711104; 0.86740325];
+COEFF.fvis_dif = [-0.2184018897; 0.01293840346; -0.1592511753; 0.5982529611; 0.3860483638; 0.1964311796];
+COEFF.par_dir  = [-2.073819096; 4.853580412; -0.8969230056; 0.02085689304; -0.1316859853; 4.771681096];
+COEFF.par_dif  = [4.196952945; -1.48137403; 0.5016835561; -0.8041843253; -0.2782303774; -2.077038274];
+end
